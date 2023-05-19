@@ -2,7 +2,7 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>DoujinshiClub</title>
+		<title>{{title}}</title>
 		<style></style>
 		<script type="text/javascript">
 			{%for message in get_flashed_messages() %}
@@ -16,14 +16,9 @@
 			<div id="header"></div>
 			<div id="leftside">
 				<div class="columnflex">
-					<div>User:</div>
-					<div><a href="{{url_for('user.login')}}"><span>login</span></a></div>
-					<div><a href="{{url_for('user.register')}}"><span>register</span></a></div>
-					<div><a href=""><span>dojinshi</span></a></div>
-					<div>Topic</div>
-					<div>Class</div>
-					<div>Author</div>
-					<div>Search</div>
+					<div><a href="{{user}}"><span>UserSpace</span></a></div>
+					<div><a href="{{doujinshi}}"><span>Doujinshi</span></a></div>
+					<div><a href="{{index}}"><span>HomePage</span></a></div>
 				</div>
 			</div>
 			<div class="fill">

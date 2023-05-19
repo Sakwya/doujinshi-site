@@ -2,13 +2,15 @@ import functools
 from flask import Blueprint, request, render_template, flash, session, redirect, url_for, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from core.db import get_db
+from core.urls import init_dic
 
 bp = Blueprint('doujinshi', __name__, url_prefix='/doujinshi')
 
 
 @bp.route('/', methods=('GET', 'POST'))
 def home():
-    return render_template("doujinshi.html")
+    url_dic = init_dic('DoujinshiClub')
+    return render_template("doujinshi.html", **url_dic)
 
 
 @bp.route('/<doujinshi_id>', methods=('GET', 'POST'))
