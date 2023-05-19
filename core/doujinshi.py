@@ -7,7 +7,7 @@ bp = Blueprint('doujinshi', __name__, url_prefix='/doujinshi')
 
 
 @bp.route('/', methods=('GET', 'POST'))
-def route():
+def home():
     return render_template("doujinshi.html")
 
 
