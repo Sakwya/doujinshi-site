@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>DoujinshiClub</title>
+		<style>
+			body {
+				background-image: url({{url_for('static',filename='background.jpg')}});
+			}
+		</style>
+		<script type="text/javascript">
+			{%for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header"></div>
+			<div id="main" class="centerflex">
+				<div id="topic">
+					<span class="gradient">DouJinShi<div class="gradient"></div></span>
+					<div class="ring gradient"></div>
+				</div>
+				<a href="{{url_for('doujinshi.index')}}"><span>doujinshi</span></a>
+				<a href="#"><span>入口2</span></a>
+				<a href="#"><span>入口3</span></a>
+			</div>
+			<div id="footer"></div>
+		</div>
+	</body>
+</html>

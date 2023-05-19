@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>DoujinshiClub</title>
+		<style></style>
+		<script type="text/javascript">
+			{%for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header"></div>
+			<div id="leftside">
+				<div class="columnflex">
+					<div>User:</div>
+					<div><a href="{{url_for('user.login')}}"><span>login</span></a></div>
+					<div><a href="{{url_for('user.register')}}"><span>register</span></a></div>
+					<div><a href=""><span>dojinshi</span></a></div>
+					<div>Topic</div>
+					<div>Class</div>
+					<div>Author</div>
+					<div>Search</div>
+				</div>
+			</div>
+			<div class="fill">
+				<div id="main" class="bg_shadow">
+					<div id="head_img">
+						<div class="centerflex">
+							<div id="topic">
+								<span class="gradient">DouJinShi<div class="gradient"></div></span>
+								<div class="ring gradient"></div>
+							</div>
+						</div>
+					</div>
+					<div id="doujinshi" class="post">
+						<div class="topic">Doujinshi:
+						</div>
+						<hr />
+						<div class="list">
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="footer"></div>
+		</div>
+	</body>
+</html>

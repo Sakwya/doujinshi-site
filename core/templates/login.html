@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>DoujinshiClub</title>
+		<style></style>
+		<script type="text/javascript">
+			{%for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header"></div>
+			<div class="fill">
+				<div id="main" class="bg_shadow">
+					<form method="post">
+						<fieldset>
+							<legend>Login</legend>
+							<label>username:</label><input type="text" name="username" /><br />
+							<label>passward:</label><input type="password" name="password" /><br />
+							<input type="submit" value="SUBMIT" /><hr /><a href="{{url_for('user.register')}}">Go Register</a>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+			<div id="footer"></div>
+		</div>
+	</body>
+</html>
