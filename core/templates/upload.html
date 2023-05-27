@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>DoujinshiClub</title>
+		<style></style>
+		<script type="text/javascript">
+			{%for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header"></div>
+			<div class="fill">
+				<div id="main" class="bg_shadow">
+					<form method="post" action="{{url_for('upload.doujinshi')}}" enctype="multipart/form-data">
+						<fieldset>
+							<legend>DouJinShi</legend>
+							<label>DoujinshiName:</label><input type="text" name="doujinshiname" required/><br />
+							<label>DoujinshiCover:</label><input id="file-input" type="file" accept="image/*" name="cover"/><span id="upload-span">上传文件</span><br />
+							<div id="cover"></div>
+							<script>
+								const upload=()=>{
+									return document.getElementById("file-input").click();
+								};
+								document.getElementById("upload-span").addEventListener("click",()=>{
+									upload();
+								});
+								document.getElementById("file-input").addEventListener("change",()=>{
+									let cover =URL.createObjectURL(document.getElementById("file-input").files[0]);
+									document.getElementById("cover").style.backgroundImage = "url("+cover+")";
+								});
+							</script>
+							<label>Author:</label><input list="author" type="text" name="author"/><br />
+							<datalist id="author">
+								{%for author in authors %}
+								<option value="{{author}}">
+								{% endfor %}
+							</datalist>
+							<label>Class:</label><select name="class">
+								{%for class in classes %}
+								<option value="{{class[0]}}">{{class[1]}}</option>
+								{% endfor %}
+							</select><br />
+							<label>Market:</label><input type="text" name="market"/><br />
+							<label>Pages:</label><input type="number" name="pages"/><br />
+							<input type="submit" value="SUBMIT" /><hr /><a href="{{user}}">GoBack</a>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+			<div id="footer"></div>
+		</div>
+	</body>
+</html>

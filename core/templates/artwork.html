@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>DoujinshiClub</title>
+		<style>
+			#cover{
+				background-image: url({{doujinshi_cover}});
+			}
+		</style>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header">
+				<div class="rem60">
+					<div id="mail">
+						<div id="mail-box">
+							<a href="{{review}}">待审核内容:{{unconfirmed}}</a>
+							<span></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="leftside">
+				<div class="columnflex">
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
+				</div>
+			</div>
+			<div class="fill">
+				<div id="main">
+						<div class="fill44 bg_shadow">
+							<div id ="artwork">
+								<div id="cover"></div>
+								<div>
+									<span><label>标题:</label><a>{{doujinshi_namadioqjoiqnfoqnivuqbouqebvoqbvobvoueqbouovbuobouebque}}</a></span>
+									<span><label>作者:</label><a>{{author_id}}</a></span>
+									<span><label>类别:</label><a>{{class}}</a></span>
+									<span><label>market:</label><a>{{market}}</a></span>
+									<span><label>页数:</label><a>{{pages}}</a></span>
+								</div>
+							</div>
+							<hr />
+							<div id="comment">
+								<div id="comment_input">
+									<div id="head">{{username[0]}}</div>
+									<div id="comment_space">
+										<form>
+											<textarea></textarea>
+											<div id="comment_button" class="submit">评论</div>
+											<input id="submit" type="submit"/>
+											<script>
+												const submit=()=>{
+													return document.getElementById("submit").click();
+												};
+												document.getElementById("comment_button").addEventListener("click",()=>{
+													submit();
+												});
+											</script>
+										</form>
+									</div>
+								</div>
+								<div id="comment_list">
+									<div></div>
+									<div></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="footer"></div>
+	</body>
+</html>

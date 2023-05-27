@@ -37,10 +37,11 @@ def create_app(test_config=None):
     from core import db
     db.init_app(app)
 
-    from . import doujinshi,user,admin
+    from . import doujinshi,user,admin,upload
     app.register_blueprint(doujinshi.bp)
     app.register_blueprint(user.bp)
     app.register_blueprint(admin.bp)
+    app.register_blueprint(upload.bp)
 
     # 6.返回框架实例：一个可调用框架对象
     return app

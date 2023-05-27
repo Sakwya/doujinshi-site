@@ -16,9 +16,11 @@
 			<div id="header"></div>
 			<div id="leftside">
 				<div class="columnflex">
-					<div><a href="{{user}}"><span>UserSpace</span></a></div>
-					<div><a href="{{doujinshi}}"><span>Doujinshi</span></a></div>
-					<div><a href="{{index}}"><span>HomePage</span></a></div>
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
 				</div>
 			</div>
 			<div class="fill">
@@ -32,22 +34,17 @@
 						</div>
 					</div>
 					<div id="doujinshi" class="post">
-						<div class="topic">Doujinshi:
+						<div class="topic">同人志:
 						</div>
 						<hr />
 						<div class="list">
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
-							<div></div>
+							{% for doujinshi in doujinshis %}
+							<div style="background-image: url({{doujinshi[2]}})"><a href="{{doujinshi[1]}}">
+									<div>
+										<div>{{doujinshi[0]}}</div>
+									</div>
+								</a></div>
+							{% endfor %}
 						</div>
 					</div>
 				</div>

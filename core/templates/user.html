@@ -5,29 +5,31 @@
 		<title>DoujinshiClub</title>
 		<style></style>
 		<script type="text/javascript">
-			{
-				%
-				for message in get_flashed_messages() %
-			}
-			window.alert("{{message}}") {
-				% endfor %
-			}
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
 		</script>
 		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
 	</head>
 	<body>
 		<div id="root">
-			<div id="header"></div>
+			<div id="header">
+				<div class="rem60">
+					<div id="mail">
+						<div id="mail-box">
+							<a href="{{review}}">待审核内容:{{unconfirmed}}</a>
+							<span></span>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div id="leftside">
 				<div class="columnflex">
-					<div>User:</div>
-					<div><a href="{{url_for('user.login')}}"><span>login</span></a></div>
-					<div><a href="{{url_for('user.register')}}"><span>register</span></a></div>
-					<div><a href=""><span>dojinshi</span></a></div>
-					<div>Topic</div>
-					<div>Class</div>
-					<div>Author</div>
-					<div>Search</div>
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
 				</div>
 			</div>
 			<div class="fill">
@@ -35,7 +37,7 @@
 					<div id="head_img">
 						<div class="centerflex">
 							<div id="topic">
-								<span class="gradient">{{user_name}}
+								<span class="gradient">{{username}}
 									<div class="gradient"></div>
 								</span>
 								<div class="ring gradient"></div>
@@ -43,12 +45,12 @@
 						</div>
 					</div>
 					<div id="user" class="post">
-						<div class="topic">Artwork:<a href="#">upload</a>
+						<div class="topic">作品:<a href="{{upload}}">上传</a>
 						</div>
 						<hr />
 						<div class="list">
 							{%if artworks|length == 0 %}
-							<span class="topic">no artwork</span>
+							<span class="topic">还没有作品</span>
 							{%else%}
 							{% for doujinshi in artworks %}
 							<div style="background-image: url({{doujinshi[2]}})"><a href="{{doujinshi[1]}}">
@@ -60,12 +62,12 @@
 							{%endif%}
 
 						</div>
-						<div class="topic">Collection:
+						<div class="topic">收藏夹:
 						</div>
 						<hr />
 						<div class="list">
 							{%if collections|length == 0 %}
-							<span class="topic">no collection</span>
+							<span class="topic">还没有收藏</span>
 							{%else%}
 							{% for doujinshi in collections %}
 							<div style="background-image: url({{doujinshi[2]}})"><a href="{{doujinshi[1]}}">
@@ -75,7 +77,7 @@
 								</a></div>
 							{% endfor %}
 							{%endif%}
-							
+
 						</div>
 					</div>
 				</div>

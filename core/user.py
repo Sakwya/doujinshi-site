@@ -2,9 +2,7 @@ import functools
 from flask import Blueprint, request, render_template, flash, session, redirect, url_for, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from core.db import get_db
-import smtplib
-from email.mime.text import MIMEText
-from email.header import Header
+from core.urls import init_dic
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -32,30 +30,6 @@ def register():
                     "INSERT INTO user (user_name, password, email) VALUES (?, ?, ?)",
                     (username, generate_password_hash(password), email),
                 )
-
-                mail_host = "smtp.163.com"  # 设置服务器
-                mail_user = "sakwya_auto_sender@163.com"  # 用户名
-                mail_pass = "LOUBXHDQQMSSMXSD"  # 口令
-
-                sender = 'from@doujinshi'
-                receivers = [email]  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
-                print(email, " ", username)
-                # 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码
-                message = MIMEText('恭喜你注册成功~☆', 'plain', 'utf-8')
-                message['From'] = Header("管理员", 'utf-8')  # 发送者
-                message['To'] = Header(username, 'utf-8')  # 接收者
-
-                subject = '账号注册成功通知'
-                message['Subject'] = Header(subject, 'utf-8')
-
-                try:
-                    smtpObj = smtplib.SMTP()
-                    smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
-                    smtpObj.login(mail_user, mail_pass)
-                    smtpObj.sendmail(sender, receivers, message.as_string())
-                    print("邮件发送成功")
-                except smtplib.SMTPException:
-                    print("Error: 无法发送邮件")
                 db.commit()
             except db.IntegrityError:
                 error = f'用户 {username} 已经注册过！'
@@ -93,6 +67,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['user_id']
+            session['user_name'] = username
             flash('登陆成功')
             if username == 'manager':
                 return redirect(url_for('admin.index'))
@@ -100,6 +75,10 @@ def login():
 
         # 页面闪现错误提示
         flash(error)
+
+    if request.args.get('logout') == '1':
+        session.clear()
+        flash("退出登录成功！")
 
     # GET访问方式，直接返回登陆页面
     return render_template('login.html')
@@ -126,7 +105,7 @@ def index(user_id):
         (user_id,)
     ).fetchone()
     if user is None:
-        session.pop('user_id')
+        session.clear()
         error = '用户不存在'
         flash(error)
         return render_template('login.html')
@@ -156,11 +135,17 @@ def index(user_id):
             artwork.append(url_for('static', filename='no_cover.jpg'))
         artworks.append(artwork)
 
-    dic = {
-        'user_name': user['user_name'],
+    unconfirmed = len(db.execute(
+        "SELECT * FROM unconfirmed "
+        "WHERE user_id=? ",
+        (user_id,)
+    ).fetchall())
+    url_dic = init_dic(user)
+    url_dic.update({
         'collections': collections,
-        'artworks': artworks
-    }
+        'artworks': artworks,
+        'unconfirmed': unconfirmed,
+    })
 
     # GET访问方式，直接返回登陆页面
-    return render_template('user.html', **dic)
+    return render_template('user.html', **url_dic)
