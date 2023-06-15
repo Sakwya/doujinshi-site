@@ -17,12 +17,31 @@
 					<fieldset>
 						<legend>Configure</legend>
 						<ul>
+							<li><hr /></li>
 							<li><label>用户名:</label><input type="text" name="user_name" /></li>
-							<li><label>新头像</label><div id="head_img" style="background-image:url('../static/img/user/no_head.png');"></div></li>
+							<li><hr /></li>
+							<li style="align-items: flex-start;z-index: 10;"><div id="head_img" style="background-image:url('../static/img/user/no_head.png');"></div></li>
+							<li><input id="file-input" type="file" accept="image/*" name="head_img" style="display: none;" /></li>
 							<li></li>
-							<li></li>
+							<li><span id="upload-span">更换头像</span></li>
+							<li><hr /></li>
 							<li><input type="submit" value="提交" /></li>
 							<li></li>
+							<script type="text/javascript">
+								const upload = () => {
+									return document.getElementById("file-input").click();
+								};
+								document.getElementById("head_img").addEventListener("click", () => {
+									upload();
+								});
+								document.getElementById("upload-span").addEventListener("click", () => {
+									upload();
+								});
+								document.getElementById("file-input").addEventListener("change", () => {
+									let head_img = URL.createObjectURL(document.getElementById("file-input").files[0]);
+									document.getElementById("head_img").style.backgroundImage = "url(" + head_img + ")";
+								});
+							</script>
 						</ul>
 					</fieldset>
 				</form>

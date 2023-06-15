@@ -165,6 +165,9 @@
 								document.getElementById("upload-span").addEventListener("click", () => {
 									upload();
 								});
+								document.getElementById("cover").addEventListener("click", () => {
+									upload();
+								});
 								document.getElementById("file-input").addEventListener("change", () => {
 									let cover = URL.createObjectURL(document.getElementById("file-input").files[0]);
 									document.getElementById("cover").style.backgroundImage = "url(" + cover + ")";
