@@ -42,16 +42,33 @@ def index(doujinshi_id):
         flash("找不到该页面")
         return redirect(url_for('doujinshi.home'))
     doujinshi_name, author_id, class_id, user_id, doujinshi_cover, market, pages = result
+
+    if author_id is None:
+        author_name = "未知"
+        author_page = ""
+    else:
+        author_name = db.execute(
+            "SELECT author_name FROM author WHERE author_id = ?",
+            (author_id,)
+        ).fetchone()[0]
+        author_page = "1"
+
     class_name = db.execute(
         "SELECT class_name FROM class "
         "WHERE class_id = ?",
         (class_id,)
     ).fetchone()[0]
-    url_dic = init_dic("")
+
+    if doujinshi_cover is None:
+        doujinshi_cover = url_for('static', filename="no_cover.jpg")
+    if pages is None:
+        pages = "未知"
+    url_dic = init_dic(doujinshi_name)
     url_dic.update({
         'doujinshi_id': doujinshi_id,
         'doujinshi_name': doujinshi_name,
-        'author_id': author_id,
+        'author_name': author_name,
+        'author_page': author_page,
         'class': class_name,
         'doujinshi_cover': doujinshi_cover,
         'market': market,

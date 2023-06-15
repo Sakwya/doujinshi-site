@@ -42,10 +42,12 @@
 							<div id ="artwork">
 								<div id="cover"></div>
 								<div>
-									<span><label>标题:</label><a>{{doujinshi_namadioqjoiqnfoqnivuqbouqebvoqbvobvoueqbouovbuobouebque}}</a></span>
-									<span><label>作者:</label><a>{{author_id}}</a></span>
+									<span><label>标题:</label><a>{{doujinshi_name}}</a></span>
+									<span><label>作者:</label><a href="{{author_page}}">{{author_name}}</a></span>
 									<span><label>类别:</label><a>{{class}}</a></span>
+									{% if market != None %}
 									<span><label>market:</label><a>{{market}}</a></span>
+									{%endif%}
 									<span><label>页数:</label><a>{{pages}}</a></span>
 								</div>
 							</div>

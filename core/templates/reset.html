@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>用户登录-Doujinshi</title>
+		<style>
+			#root {
+				background-image: url("{{url_for('static',filename='background.jpg')}}") !important;
+			}
+		</style>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/login.css" />
+	</head>
+	<body>
+		<div id="root">
+			<div id="main">
+				<form method="post">
+					<fieldset>
+						<legend>LogIn</legend>
+						<ul>
+							<li><label>用户名:</label><input type="text" name="username" /></li>
+							<li><label>密码:</label><input type="password" name="password" /></li>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li><input type="submit" value="登录" /></li>
+							<li><hr /></li>
+							<li><a href="{{signup}}">注册</a></li>
+						</ul>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

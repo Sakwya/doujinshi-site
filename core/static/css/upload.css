@@ -1,0 +1,118 @@
+article>div>form{
+	width: 45rem !important;
+	padding: 1rem;
+	background-color: #fff;
+	border-top-right-radius: 11rem;
+	border-bottom-left-radius: 6rem;
+}
+fieldset{
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	border: 0.5rem solid #a5f;
+	border-top-right-radius: 10rem;
+	border-bottom-left-radius: 5rem;
+	padding: 2rem;
+}
+legend{
+	font-weight: bold;
+	font-variant: small-caps;
+	padding: 0 1rem;
+	font-size: 2rem;
+	color: #a5f;
+}
+
+fieldset>ul.form{
+	width: 100%;
+	list-style: none;
+	display: grid;
+	grid-template-columns: 20rem 20rem;
+	grid-template-rows: 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem;/*22列*/
+	flex-direction: column;
+}
+fieldset>ul{
+	width: 100%;
+	list-style: none;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+}
+fieldset>ul>li{
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+fieldset>ul>li>div{
+	margin: 0;
+	background-size: cover;
+	background-color: #a5f;
+}
+fieldset>ul>li>div:hover{
+	background-color: #a5f;
+}
+label{
+	font-size: 1.2rem;
+	color: #555;
+	font-weight: bold;
+}
+input{
+	border: none;
+	box-sizing: border-box;
+	padding-left: 0.2rem;
+	font-size: 1.2rem;
+	color: #888;
+	width: 14rem;
+	background-color: #f0f0f0;
+	transition: background-color,box-shadow 0.2s;
+}
+input:focus{
+	background-color: #fff;
+	box-shadow: #a5f 0.1rem 0.1rem 0.3rem;
+}
+input[type="file"]{
+	display: none;
+}
+input[type="submit"],form a{
+	margin: 0 auto;
+	width: 4rem;
+	height: 1.6rem;
+	line-height: 1.6rem;
+	font-weight: bold;
+	font-size: 1.2rem;
+	color: #fff;
+	text-align: center;
+	background-color: #a5f;
+	border-radius: 0.3rem;
+	cursor: pointer;
+	transition: background-color 0.4s;
+}
+input[type="submit"]:hover,form a:hover{
+	background-color: blueviolet;
+}
+select{
+	font-size: 1.2rem;
+}
+select,#upload-span{
+	display: inline-block;
+	line-height: 2rem;
+	border: none;
+	margin: 0;
+	width: 14rem;
+	font-weight: bold;
+	color: #fff;
+	text-align: center;
+	background-color: #a5f;
+	border-radius: 0.3rem;
+	cursor: pointer;
+	transition: background-color 0.4s;
+}
+select:hover,#upload-span:hover{
+	background-color: blueviolet;
+}
+hr{
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-color: #a5f;
+	width: 100%;
+}

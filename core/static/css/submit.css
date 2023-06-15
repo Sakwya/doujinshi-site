@@ -1,0 +1,99 @@
+form {
+	width: 22rem;
+	height: 32rem;
+	padding: 1rem;
+	background-color: #fff;
+	border-top-right-radius: 11rem;
+	border-bottom-left-radius: 6rem;
+}
+
+fieldset {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	border: 0.5rem solid #a5f;
+	border-top-right-radius: 10rem;
+	border-bottom-left-radius: 5rem;
+	padding: 6rem 2rem;
+}
+
+legend {
+	font-weight: bold;
+	font-variant: small-caps;
+	padding: 0 1rem;
+	font-size: 2rem;
+	color: #a5f;
+}
+
+ul {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+}
+
+li {
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+li:last-child {
+	flex-direction: row-reverse;
+}
+
+label {
+	font-size: 1.2rem;
+	color: #555;
+	font-weight: bold;
+}
+
+input {
+	border: none;
+	box-sizing: border-box;
+	padding-left: 0.2rem;
+	font-size: 1.2rem;
+	color: #888;
+	width: 12rem;
+	background-color: #f0f0f0;
+	transition: background-color, box-shadow 0.2s;
+}
+
+input:focus {
+	background-color: #fff;
+	box-shadow: #a5f 0.1rem 0.1rem 0.3rem;
+}
+
+input[type="submit"],
+a {
+	width: 4rem;
+	height: 1.6rem;
+	line-height: 1.6rem;
+	font-weight: bold;
+	font-size: 1.2rem;
+	color: #fff;
+	text-align: center;
+	background-color: #a5f;
+	border-radius: 0.3rem;
+	cursor: pointer;
+	transition: background-color 0.4s;
+}
+
+input[type="submit"]:hover,
+a:hover {
+	background-color: blueviolet;
+}
+
+hr {
+	border-color: #a5f;
+	width: 100%;
+}
+
+/*个人设置样式*/
+#head_img{
+	border-radius: 3rem;
+	width: 6rem;
+	height: 6rem;
+	background-size: cover;
+	background-color: #a5f;
+}

@@ -20,44 +20,11 @@ def upload():
         flash("请先进行登录！")
         return redirect(url_for('user.login'))
     if request.method == 'POST':
-        pass
-
-    db = get_db()
-    url_dic = init_dic('UPLOAD')
-
-    results = db.execute(
-        "SELECT author_name FROM author",
-        ()
-    ).fetchall()
-    author_list = []
-    for result in results:
-        author_list.append(result[0])
-
-    results = db.execute(
-        "SELECT * FROM class",
-        ()
-    ).fetchall()
-    class_list = []
-    for result in results:
-        class_list.append([result[0], result[1]])
-    url_dic.update({
-        'authors': author_list,
-        'classes': class_list,
-    })
-    return render_template('upload.html', **url_dic)
-
-
-@bp.route('/doujinshi', methods=('GET', 'POST'))
-def doujinshi():
-    if session.get('user_id') is None:
-        flash("请先进行登录！")
-        return redirect(url_for('user.login'))
-    if request.method == 'POST':
         db = get_db()
-        sql = "INSERT INTO unconfirmed (author_id,class_id,user_id,doujinshi_name,doujinshi_cover,market,pages" \
+        sql = "INSERT INTO unconfirmed (author_id,type_id,uploader_id,doujinshi_name,doujinshi_cover,market,pages" \
               ") VALUES (?,?,?,?,?,?,?)"
 
-        author_name = request.form['author']
+        author_name = request.form['author_name']
         if len(author_name) != 0:
             author_id = db.execute(
                 "SELECT author_id FROM author WHERE author_name = ?",
@@ -76,16 +43,16 @@ def doujinshi():
         else:
             sql = sql.replace('author_id,', '').replace(',?', '', 1)
 
-        class_id = request.form['class']
-        sql = sql.replace('?', class_id, 1)
+        type_id = request.form['type_id']
+        sql = sql.replace('?', type_id, 1)
 
         user_id = session.get('user_id')
         sql = sql.replace('?', str(user_id), 1)
 
-        doujinshi_name = request.form['doujinshiname']
+        doujinshi_name = request.form['doujinshi_name']
         sql = sql.replace('?', '"' + doujinshi_name + '"', 1)
 
-        cover = request.files['cover']
+        cover = request.files['doujinshi_cover']
         if len(cover.filename) != 0:
             ran = str(random.random())[3:8]
             cover.save(
@@ -110,4 +77,30 @@ def doujinshi():
         db.execute(sql)
         ans = db.commit()
         flash("提交成功！")
+        print(ans)
         return redirect(url_for('upload.upload'))
+
+    db = get_db()
+    url_dic = init_dic('UPLOAD')
+
+    results = db.execute(
+        "SELECT author_name FROM author",
+        ()
+    ).fetchall()
+    author_list = []
+    for result in results:
+        author_list.append(result[0])
+
+    results = db.execute(
+        "SELECT * FROM type",
+        ()
+    ).fetchall()
+    class_list = []
+    for result in results:
+        class_list.append([result[0], result[1]])
+    url_dic.update({
+        'authors': author_list,
+        'classes': class_list,
+    })
+    return render_template('upload.html', **url_dic)
+

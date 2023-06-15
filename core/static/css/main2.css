@@ -1,0 +1,604 @@
+body {
+	background-color: #b9e9;
+	background-size: cover;
+}
+
+* {
+	color: blueviolet;
+	font-variant: small-caps;
+	margin: 0rem;
+	padding: 0rem;
+}
+
+hr {
+	border-color: blueviolet;
+}
+
+#root {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+#header {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 2rem;
+	background-color: blueviolet;
+	z-index: 100;
+}
+.font1{
+	font-size: 1rem;
+}
+.font12{
+	font-size: 1.2rem;
+}
+.font14{
+	font-size: 1.4rem;
+}
+.font16{
+	font-size: 1.6rem;
+}
+.font18{
+	font-size: 1.8rem;
+}
+.font2{
+	font-size: 2rem;
+}
+.rem60{
+	position: relative;
+	margin: auto;
+	width: 60rem;
+	z-index: 10;
+}
+#mail{
+	position: relative;
+	float: right;
+	margin: 0 0.2rem;
+	width: 1.6rem;
+	height: 2rem;
+	line-height: 2rem;
+	z-index: 11;
+	background-image: linear-gradient(0deg, transparent 0%, transparent 25%, #b9e 25%, #b9e 35%, transparent 35%,transparent 45%, #b9e 45%, #b9e 55%, transparent 55%, transparent 65%, #b9e 65%, #b9e 75%,transparent 75%, transparent 100%);
+}
+
+#mail-box{
+	position: absolute;
+	top: -2rem;
+	right: 0rem;
+	height: 2rem;
+	width: 8rem;
+	background-color: #8a2be2aa;
+	z-index: 1;
+	transition: top 0.4s 0.2s;
+	-webkit-transition: top 0.4s 0.2s;
+}
+#mail:hover #mail-box{
+	top:0rem;
+}
+#mail-box>a{
+	color: white;
+	padding: 0rem 0.5rem;
+	width: 7rem;
+	display: block;
+	height: 2rem;
+	background-color: #8a2be222;
+}
+#footer {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2rem;
+	background-color: blueviolet;
+	z-index: 100;
+}
+
+#leftside {
+	z-index: 10;
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 0.5rem;
+	border-right: 2px solid;
+	border-image: linear-gradient(0deg, transparent 0%, transparent 45%, blueviolet 45%, blueviolet 55%, transparent 55%, transparent 100%) 2 2 2 2;
+}
+
+#leftside:hover div {
+	left: 0rem;
+}
+
+#leftside>div {
+	position: absolute;
+	left: -16rem;
+	top: 0;
+	bottom: 0;
+	width: 16rem;
+	height: 100%;
+	background-color: #93f;
+	transition: left 1s 0.3s;
+	-webkit-transition: left 1s 0.3s;
+}
+
+#rightside {
+	z-index: 10;
+	position: fixed;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 0.5rem;
+	border-left: 2px solid;
+	border-image: linear-gradient(0deg, transparent 0%, transparent 45%, blueviolet 45%, blueviolet 55%, transparent 55%, transparent 100%) 2 2 2 2;
+}
+
+#rightside:hover div {
+	right: 0rem;
+}
+
+#rightside>div {
+	position: absolute;
+	right: -16rem;
+	top: 0;
+	bottom: 0;
+	width: 16rem;
+	height: 100%;
+	background-color: blueviolet;
+	transition: right 1s 0.3s;
+	-webkit-transition: right 1s 0.3s;
+}
+
+.columnflex {
+	margin: 2rem 0;
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: column;
+}
+
+.columnflex>div {
+	color: white;
+	margin: 0.3rem auto;
+	width: 14rem;
+	height: 2.4rem;
+	box-sizing: border-box;
+}
+
+.columnflex>div>a:hover {
+	background-color: #8a2be2aa;
+}
+.columnflex>div>a{
+	box-sizing: border-box;
+	display: block;
+	padding-left: 1rem;
+	width: 14rem;
+	height: 2.4rem;
+	border-left: solid 2px #b9e9;
+	transition: background-color 0.6s;
+	-webkit-transition: background-color 0.6s;
+}
+.columnflex>div>a>span{
+	line-height: 2.4rem;
+	display: block;
+	font-size: 1.4rem;
+}
+.mainflex{
+	position: absolute;
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: column;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.centerflex {
+	position: absolute;
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: column;
+	top: 33%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.bg_shadow {
+	background-color: #8a2be222;
+	box-shadow: #8a2be222;
+	height: 100%;
+}
+
+.fill {
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+}
+#main {
+	width: 60rem;
+	height: auto;
+	margin: 2em auto;
+}
+
+.fill::-webkit-scrollbar {
+	display: none;
+}
+
+.gradient {
+	background-image: linear-gradient(45deg, #fff 0%, #fff 20%, #b9e 20%, #b9e 70%, #fff 70%, #fff 100%);
+	background-size: 50% 100%;
+}
+
+.post {
+	margin: 2rem;
+	width: auto;
+}
+
+.topic {
+	font-size: 1.4rem;
+	font-variant: small-caps;
+	color: blueviolet;
+}
+
+.topic>a {
+	font-size: 1.2rem;
+	float: right;
+	font-variant: small-caps;
+	color: blueviolet;
+}
+.list {
+	margin-bottom: 2rem;
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: wrap;
+	white-space: nowrap;
+}
+
+.list>div {
+	position: relative;
+	color: #b9e;
+	margin: 1rem 0.5rem 2rem 0.5rem;
+	width: 10rem;
+	height: 15rem;
+	background-color: blueviolet;
+}
+
+.list>div>a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.list>div>a>div {
+	position: absolute;
+	display: flex;
+	display: -webkit-flex;
+	left: 0;
+	right: 0;
+	bottom: -1.5rem;
+	height: 1.5rem;
+}
+
+.list>div>a>div>div {
+	height: 1.5rem;
+	line-height: 1.5rem;
+	margin: 0 auto;
+	font-size: 1rem;
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#head_img {
+	width: 60rem;
+	height: 30rem;
+	background-image: url("../background.jpg");
+	background-size: cover;
+	mask: linear-gradient(0deg, transparent 0, #000a 10rem, #000 20rem, #000 30rem);
+	-webkit-mask: linear-gradient(0deg, transparent 0, #000 20rem, #000 30rem);
+}
+
+#topic {
+	margin: auto;
+	width: 0rem;
+	height: 7rem;
+}
+
+#topic>* {
+	position: absolute;
+}
+
+#topic>span {
+	position: absolute;
+	top: 1rem;
+	line-height: 5rem;
+	font-size: 5rem;
+	height: 7rem;
+	transform: translate(-50%, 0);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	background-position: 0% 50%;
+	animation: gradient 8s linear infinite;
+	z-index: 10;
+}
+
+span>div {
+	height: 0.125rem;
+	animation: gradient 8s linear infinite;
+}
+
+.ring {
+	border-radius: 50%;
+	width: 7rem;
+	height: 7rem;
+	-webkit-mask: radial-gradient(transparent 0%, transparent 65%, #000 67%, #000 100%);
+	mask: radial-gradient(transparent 0%, transparent 65%, #000 67%, #000 100%);
+	animation: gradient 6s linear infinite;
+	transform: translate(-50%, 0);
+	z-index: 9;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+
+	100% {
+		background-position: 100% 50%;
+	}
+}
+
+a {
+	text-decoration: none;
+	margin: auto;
+}
+
+span {
+	word-break: keep-all;
+	font-variant: small-caps;
+}
+
+a>span {
+	font-size: 2.25rem;
+	margin: auto;
+	color: #fff;
+	transition: color 0.6s;
+	-webkit-transition: color 0.6s;
+}
+
+a>span:hover {
+	color: #b9e;
+}
+
+form {
+	margin: auto;
+	padding: 2rem;
+}
+
+fieldset {
+	position: relative;
+	border-color: blueviolet;
+	padding: 2rem;
+}
+
+legend {
+	font-size: 2rem;
+}
+
+label {
+	display: inline-block;
+	width: 14rem;
+	margin: 1rem 0;
+	height: 2rem;
+	font-size: 2rem;
+}
+
+input {
+	padding: 0 0.5rem;
+	display: inline-block;
+	font-size: 1.5rem;
+	line-height: 2rem;
+	font-variant: normal;
+	margin: 1rem 0;
+	height: 2rem;
+	border: 1px blueviolet solid;
+	background-color: #b9e;
+}
+
+input:focus {
+	background-color: #caf;
+}
+input[type="file"]{
+	display: none;
+}
+#upload-span{
+	padding: 0 0.5rem;
+	display: inline-block;
+	font-size: 1.5rem;
+	line-height: 2rem;
+	font-variant: normal;
+	margin: 1rem 0;
+	height: 2rem;
+	border: 1px blueviolet solid;
+	background-color: #b9e;
+}
+#cover{
+	position: absolute;
+	top: 3rem;
+	right: 4rem;
+	width: 10rem;
+	height: 16rem;
+	background-size: cover;
+	background-color: blueviolet;
+}
+select{
+	padding: 0 0.5rem;
+	display: inline-block;
+	font-size: 1.5rem;
+	font-variant: normal;
+	margin: 1rem 0;
+	height: 2rem;
+	border: 1px blueviolet solid;
+	background-color: #b9e;
+}
+fieldset>a {
+	font-size: 1.5rem;
+}
+.fill44{
+	position: relative;
+	margin: auto;
+	width: 44rem;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+.fill44::-webkit-scrollbar{
+	display: none;
+}
+#artwork{
+	position: relative;
+	margin: auto;
+	padding: 2rem 0rem;
+	width: 40rem;
+	overflow-x: hidden;
+	display: flex;
+	display: -webkit-flex;
+	justify-content: space-around;
+}
+#artwork>#cover{
+	margin: 0rem 2rem;
+	width: 16rem;
+	height: 24rem;
+	background-color: blueviolet;
+	background-size: cover;
+	padding: 0;
+}
+#artwork>div{
+	position: static;
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	height: 24rem;
+	overflow: hidden;
+	padding: 1rem 0rem;
+}
+#artwork>div>span{
+	display: block;
+	box-sizing: border-box;
+	width: 20rem;
+	height: 2rem;
+	margin-top: 0.2rem;
+	white-space: nowrap;
+}
+#artwork>div>span>label{
+	display: inline-block;
+	margin: 0rem;
+	padding: 0rem;
+	width: 4rem;
+	height: 2rem;
+	line-height: 2rem;
+	font-size: 1.4rem;
+	float: left;
+}
+#artwork>div>span>a{
+	display: inline-block;
+	margin: 0rem;
+	padding: 0rem;
+	max-width: 16rem;
+	height: 2rem;
+	font-size: 1.4rem;
+	font-variant: normal;
+	line-height: 2rem;
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#comment{
+	margin: 2rem auto;
+	width: 40rem;
+	background-color: #9cf2;
+}
+#comment_input{
+	position: relative;
+	width: 40rem;
+	height: 10rem;
+}
+#head{
+	line-height: 4rem;
+	text-align: center;
+	font-size: 2rem;
+	position: absolute;
+	border-radius: 2rem;
+	top: 1rem;
+	left: 1rem;
+	width: 4rem;
+	height: 4rem;
+	color: #93f;
+	font-weight: bolder;
+	background-color: white;
+	z-index: 11;
+}
+#comment_space{
+	position: relative;
+	top: 1rem;
+	left: 6rem;
+	width: 34rem;
+}
+#comment_space>form{
+	position: relative;
+	padding: 0;
+	width: 34rem;
+	height: 8rem;
+}
+#comment_space>form>*{
+	margin: 0 0.5rem;
+	border-radius: 0.5rem;
+	font-size: 1.1rem;
+}
+textarea{
+	color: #222;
+	font-variant: normal;
+	box-sizing: border-box;
+	padding: 0.4rem 0.2rem;
+}
+#comment_space>form>textarea{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 29rem;
+	height: 4rem;
+	resize: none;
+	transition: height 0.6s;
+}
+#comment_space>form>textarea:focus{
+	height: 6rem;
+}
+
+#comment_space>form>.submit{
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 3rem;
+	height: 4rem;
+	line-height: 4rem;
+	text-align: center;
+	margin: 0;
+	cursor: pointer;
+}
+.submit{
+	background-color: white;
+	transition: background-color 0.4s;
+}
+.submit:hover{
+	background-color: #ddd;
+}
+#comment_space>form>input{
+	display: none;
+}

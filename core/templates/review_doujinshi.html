@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>{{title}}</title>
+		<style>
+			#cover{
+				background-image: url("{{doujinshi_cover}}"");
+			}
+		</style>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header">
+			</div>
+			<div id="leftside">
+				<div class="columnflex">
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
+				</div>
+			</div>
+			<div class="fill">
+				<div id="main">
+					<div id ="unconfirmed_info">
+						<div id ="artwork">
+							<div id="cover"></div>
+							<div>
+								<span><label>标题:</label><a>{{doujinshi_name}}</a></span>
+								<span><label>作者:</label><a href="{{author_page}}">{{author_name}}</a></span>
+								<span><label>类别:</label><a>{{class}}</a></span>
+								{% if market != None %}
+								<span><label>market:</label><a>{{market}}</a></span>
+								{%endif%}
+								<span><label>页数:</label><a>{{pages}}</a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="footer"></div>
+	</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>{{title}}</title>
+		<style>
+		</style>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header">
+			</div>
+			<div id="leftside">
+				<div class="columnflex">
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
+				</div>
+			</div>
+			<div class="fill">
+				<div id="main">
+						<div id = "admin">
+							<div id="topic">
+								<span class="gradient">管理员工具</span>
+							</div>
+							<hr />
+							<div class="list">
+								<div style="background-image: url({{review_cover}})">
+									<a href="{{review}}">
+										<div>
+											<div>审核</div>
+										</div>
+									</a>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+			<div id="footer"></div>
+	</body>
+</html>

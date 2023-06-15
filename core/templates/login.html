@@ -2,31 +2,35 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>DoujinshiClub</title>
-		<style></style>
-		<script type="text/javascript">
-			{%for message in get_flashed_messages() %}
-			window.alert("{{message}}") 
-			{% endfor %}
-		</script>
-		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+		<title>用户登录-Doujinshi</title>
+		<style>
+			#root {
+				background-image: url("{{url_for('static',filename='background.jpg')}}") !important;
+			}
+		</style>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/submit.css" />
 	</head>
 	<body>
 		<div id="root">
-			<div id="header"></div>
-			<div class="fill">
-				<div id="main" class="bg_shadow">
-					<form method="post">
-						<fieldset>
-							<legend>Login</legend>
-							<label>username:</label><input type="text" name="username" /><br />
-							<label>passward:</label><input type="password" name="password" /><br />
-							<input type="submit" value="SUBMIT" /><hr /><a href="{{url_for('user.register')}}">Go Register</a>
-						</fieldset>
-					</form>
-				</div>
+			<div id="main">
+				<form method="post">
+					<fieldset>
+						<legend>LogIn</legend>
+						<ul>
+							<li><label>用户名:</label><input type="text" name="username" /></li>
+							<li><label>密码:</label><input type="password" name="password" /></li>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li><input type="submit" value="登录" /></li>
+							<li><hr /></li>
+							<li><a href="{{signup}}">注册</a></li>
+						</ul>
+					</fieldset>
+				</form>
 			</div>
-			<div id="footer"></div>
 		</div>
 	</body>
 </html>

@@ -2,32 +2,26 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>DoujinshiClub</title>
+		<title>Doujinshi</title>
 		<style>
-			body {
-				background-image: url({{url_for('static',filename='background.jpg')}});
+			#root{
+				background-image: url(static/background.jpg) !important;
 			}
 		</style>
-		<script type="text/javascript">
-			{%for message in get_flashed_messages() %}
-			window.alert("{{message}}") 
-			{% endfor %}
-		</script>
-		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 	</head>
 	<body>
 		<div id="root">
-			<div id="header"></div>
-			<div id="main" class="mainflex">
-				<div id="topic">
-					<span class="gradient">DouJinShi<div class="gradient"></div></span>
-					<div class="ring gradient"></div>
-				</div>
-				<a href="{{url_for('doujinshi.home')}}"><span>doujinshi</span></a>
-				<a href="#"><span>入口2</span></a>
-				<a href="#"><span>入口3</span></a>
+			<div id="main">
+				<a href="home">
+					<span>DouJinShi</span>
+					<span id = "gradient">DouJinShi</span>
+					<span id = "shadow">DouJinShi</span>
+					<div id ="l" class="arr">&gt;</div>
+					<div id ="r" class="arr">&lt;</div>
+				</a>
 			</div>
-			<div id="footer"></div>
 		</div>
 	</body>
 </html>

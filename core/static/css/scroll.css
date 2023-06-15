@@ -1,0 +1,30 @@
+#root {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow-y: scroll;
+}
+#root::-webkit-scrollbar{
+	width: 0.6rem;
+	height: 0.6rem;
+}
+#root::-webkit-scrollbar-button{
+	display: none;
+}
+*::-webkit-scrollbar-corner{
+	display: none;
+}
+#root::-webkit-scrollbar-thumb{
+	border-radius: 1rem;
+	background-color: #a5f;
+}
+#root::-webkit-scrollbar-track{
+	border-radius: 1rem;
+	background-color: #fff;
+}
+article {
+	width: 100%;
+	white-space:normal; word-break:break-all;
+}

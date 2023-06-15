@@ -1,5 +1,5 @@
 import os
-from flask import Flask,render_template
+from flask import Flask,render_template,session,redirect,url_for
 
 
 def create_app(test_config=None):
@@ -10,13 +10,13 @@ def create_app(test_config=None):
             template_folder="templates"  # 设置模板文件的目录，默认值是templates
             )
 
-    # 2.设置SECRET_KEY和数据库实例路径
+    # 设置SECRET_KEY和数据库实例路径
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'doujinshi.sqlite'),
     )
 
-    # 3.根据提供的参数启动特定模式，如开发模式、测试模式、生产模式等。
+    # 根据提供的参数启动特定模式，如开发模式、测试模式、生产模式等。
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
     else:
@@ -28,15 +28,62 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # 5.创建一个路由，验证工厂函数是否正常
+    # 路由
+    from core import fetch
+    from core.urls import init_dic
     @app.route('/')
-    @app.route('/home')
     def index():
         return render_template('index.html')
 
+    @app.route('/home')
+    @app.route('/manga')
+    def manga():
+        user_id = session.get("user_id")
+        if user_id is None:
+            return redirect(url_for('user.login'))
+        url_dic = init_dic()
+        url_dic.update({
+            'collection_list':fetch.get_collection(6,session.get('user_id'),1)
+        })
+        return render_template('manga.html',**url_dic)
+
+    @app.route('/illustration')
+    def illustration():
+        user_id = session.get("user_id")
+        if user_id is None:
+            return redirect(url_for('user.login'))
+        url_dic = init_dic()
+        url_dic.update({
+            'collection_list':fetch.get_collection(6,session.get('user_id'),2)
+        })
+        return render_template('illustration.html',**url_dic)
+
+    @app.route('/novel')
+    def novel():
+        user_id = session.get("user_id")
+        if user_id is None:
+            return redirect(url_for('user.login'))
+        url_dic = init_dic()
+        url_dic.update({
+            'collection_list':fetch.get_collection(6,session.get('user_id'),3)
+        })
+        return render_template('novel.html',**url_dic)
+
+    @app.route('/magazine')
+    def magazine():
+        user_id = session.get("user_id")
+        if user_id is None:
+            return redirect(url_for('user.login'))
+        url_dic = init_dic()
+        url_dic.update({
+            'collection_list':fetch.get_collection(6,session.get('user_id'),4)
+        })
+        return render_template('magazine.html',**url_dic)
+
+    #数据库
     from core import db
     db.init_app(app)
-
+    #蓝图
     from . import doujinshi,user,admin,upload
     app.register_blueprint(doujinshi.bp)
     app.register_blueprint(user.bp)

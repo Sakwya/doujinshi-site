@@ -1,0 +1,345 @@
+body {
+	background-color: #93f;
+	background-size: cover;
+}
+
+* {
+	color: blueviolet;
+	font-variant: small-caps;
+	margin: 0rem;
+	padding: 0rem;
+}
+
+hr {
+	border-color: blueviolet;
+}
+
+#root {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+#header {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 2rem;
+	background-color: white;
+	z-index: 100;
+}
+#footer {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2rem;
+	background-color: white;
+	z-index: 100;
+}
+
+#leftside {
+	z-index: 10;
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 0.5rem;
+	border-right: 2px solid;
+	border-image: linear-gradient(0deg, transparent 0%, transparent 45%, blueviolet 45%, blueviolet 55%, transparent 55%, transparent 100%) 2 2 2 2;
+}
+
+#leftside:hover div {
+	left: 0rem;
+}
+
+#leftside>div {
+	position: absolute;
+	left: -16rem;
+	top: 0;
+	bottom: 0;
+	width: 16rem;
+	height: 100%;
+	background-color: #93f;
+	transition: left 1s 0.3s;
+	-webkit-transition: left 1s 0.3s;
+}
+
+#rightside {
+	z-index: 10;
+	position: fixed;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 0.5rem;
+	border-left: 2px solid;
+	border-image: linear-gradient(0deg, transparent 0%, transparent 45%, blueviolet 45%, blueviolet 55%, transparent 55%, transparent 100%) 2 2 2 2;
+}
+
+#rightside:hover div {
+	right: 0rem;
+}
+
+#rightside>div {
+	position: absolute;
+	right: -16rem;
+	top: 0;
+	bottom: 0;
+	width: 16rem;
+	height: 100%;
+	background-color: blueviolet;
+	transition: right 1s 0.3s;
+	-webkit-transition: right 1s 0.3s;
+}
+
+.columnflex {
+	margin: 2rem 0;
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: column;
+}
+
+.columnflex>div {
+	color: white;
+	margin: 0.3rem auto;
+	width: 14rem;
+	height: 2.4rem;
+	box-sizing: border-box;
+}
+
+.columnflex>div>a:hover {
+	background-color: #8a2be2aa;
+}
+.columnflex>div>a{
+	box-sizing: border-box;
+	display: block;
+	padding-left: 1rem;
+	width: 14rem;
+	height: 2.4rem;
+	border-left: solid 2px #b9e9;
+	transition: background-color 0.6s;
+	-webkit-transition: background-color 0.6s;
+}
+.columnflex>div>a>span{
+	line-height: 2.4rem;
+	display: block;
+	font-size: 1.4rem;
+}
+
+.fill {
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+}
+#main {
+	margin: 2em auto;
+	position: relative;
+	width: 44rem;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	background-color: #b9e;
+}
+#main::-webkit-scrollbar{
+	display: none;
+}
+
+.fill::-webkit-scrollbar {
+	display: none;
+}
+
+.gradient {
+	background-image: linear-gradient(45deg, #fff 0%, #fff 20%, #93f 20%, #93f 70%, #fff 70%, #fff 100%);
+	background-size: 50% 100%;
+}
+
+
+.list {
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: wrap;
+	white-space: nowrap;
+}
+
+.list>div {
+	position: relative;
+	color: #b9e;
+	margin: 1rem 0.5rem 2rem 0.5rem;
+	width: 10rem;
+	height: 15rem;
+	background-color: blueviolet;
+	background-size: cover;
+}
+
+.list>div>a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.list>div>a>div {
+	position: absolute;
+	display: flex;
+	display: -webkit-flex;
+	left: 0;
+	right: 0;
+	bottom: -1.5rem;
+	height: 1.5rem;
+}
+
+.list>div>a>div>div {
+	height: 1.5rem;
+	line-height: 1.5rem;
+	margin: 0 auto;
+	font-size: 1rem;
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#topic {
+	margin: auto;
+	width: 0rem;
+	height: 7rem;
+}
+
+#topic>* {
+	position: absolute;
+}
+
+#topic>span {
+	position: absolute;
+	line-height: 7rem;
+	font-size: 5rem;
+	height: 7rem;
+	transform: translate(-50%, 0);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	background-position: 0% 50%;
+	animation: gradient 8s linear infinite;
+	z-index: 10;
+}
+
+span>div {
+	height: 0.125rem;
+	animation: gradient 8s linear infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+
+	100% {
+		background-position: 100% 50%;
+	}
+}
+
+a {
+	text-decoration: none;
+	margin: auto;
+}
+
+span {
+	word-break: keep-all;
+	font-variant: small-caps;
+}
+
+a>span {
+	font-size: 2.25rem;
+	margin: auto;
+	color: #fff;
+	transition: color 0.6s;
+	-webkit-transition: color 0.6s;
+}
+
+a>span:hover {
+	color: #b9e;
+}
+
+.line_box{
+	margin: 4rem 2rem;
+}
+.line_box>div{
+	height: 2rem;
+	background-color: #93f;
+	line-height: 2rem;
+	box-sizing: border-box;
+}
+.line_box>div span{
+	float: left;
+	display: block;
+	border:0.1rem solid #b9e;
+	box-sizing: border-box;
+}
+.line_top{
+	width: 100%;
+}
+.line_bottom{
+	width: 100%;
+}
+
+#artwork{
+	position: relative;
+	margin: auto;
+	padding: 2rem 0rem;
+	width: 40rem;
+	overflow-x: hidden;
+	display: flex;
+	display: -webkit-flex;
+	justify-content: space-around;
+}
+#artwork>#cover{
+	margin: 0rem 2rem;
+	width: 16rem;
+	height: 24rem;
+	background-color: blueviolet;
+	background-size: cover;
+	padding: 0;
+}
+#artwork>div{
+	position: static;
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	height: 24rem;
+	overflow: hidden;
+	padding: 1rem 0rem;
+}
+#artwork>div>span{
+	display: block;
+	box-sizing: border-box;
+	width: 20rem;
+	height: 2rem;
+	margin-top: 0.2rem;
+	white-space: nowrap;
+}
+#artwork>div>span>label{
+	display: inline-block;
+	margin: 0rem;
+	padding: 0rem;
+	width: 4rem;
+	height: 2rem;
+	line-height: 2rem;
+	font-size: 1.4rem;
+	float: left;
+}
+#artwork>div>span>a{
+	display: inline-block;
+	margin: 0rem;
+	padding: 0rem;
+	max-width: 16rem;
+	height: 2rem;
+	font-size: 1.4rem;
+	font-variant: normal;
+	line-height: 2rem;
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>{{title}}</title>
+		<style>
+		</style>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+	</head>
+	<body>
+		<div id="root">
+			<div id="header">
+			</div>
+			<div id="leftside">
+				<div class="columnflex">
+					<div></div>
+					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
+					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
+					<div><a href="{{index}}"><span>主页</span></a></div>
+					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
+				</div>
+			</div>
+			<div class="fill">
+				<div id="main">
+					{% if review_info_list|length == 0 %}
+						<div id="topic">
+							<span class="gradient"><a href="{{admin}}">审核完毕</a></span>
+						</div>
+					{% else %}
+					<div id ="review" class="line_box">
+						<div class="line_top"></div>
+						{% for review_info in review_info_list %}
+						<div><a href="review/{{review_info[0]}}"><span>{{review_info[1]}}<span></span><span>{{review_info[2]}}</span></a></div>
+						{% endfor %}
+						<div class="line_bottom"></div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+			<div id="footer"></div>
+	</body>
+</html>
