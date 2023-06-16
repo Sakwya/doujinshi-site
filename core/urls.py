@@ -4,13 +4,19 @@ from core.fetch import get_username
 
 def init_dic(title="未命名的页面"):
     dev = False
-    if session.get('user_id') == 0:
+    user_id = session.get('user_id')
+
+    if user_id == 0:
         dev = True
+    if user_id is None:
+        username = "未登录"
+    else:
+        username = get_username(user_id)
     url_dic = {
         'title': title,
         'index': url_for('index'),
         'account': session.get('account'),
-        'username': get_username(session.get('user_id')),
+        'username': username,
         # 用户登录
         'login': url_for('user.login'),
         'signup': url_for('user.signup'),
