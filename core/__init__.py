@@ -43,7 +43,8 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
-            'collection_list':fetch.get_collection(6,session.get('user_id'),1)
+            'collection_list':fetch.get_collection(6,session.get('user_id'),1),
+            'random_list':fetch.get_random(18,1)
         })
         return render_template('manga.html',**url_dic)
 
@@ -54,7 +55,8 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
-            'collection_list':fetch.get_collection(6,session.get('user_id'),2)
+            'collection_list':fetch.get_collection(6,session.get('user_id'),2),
+            'random_list':fetch.get_random(18,2)
         })
         return render_template('illustration.html',**url_dic)
 
@@ -65,7 +67,8 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
-            'collection_list':fetch.get_collection(6,session.get('user_id'),3)
+            'collection_list':fetch.get_collection(6,session.get('user_id'),3),
+            'random_list':fetch.get_random(18,3)
         })
         return render_template('novel.html',**url_dic)
 
@@ -76,7 +79,8 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
-            'collection_list':fetch.get_collection(6,session.get('user_id'),4)
+            'collection_list':fetch.get_collection(6,session.get('user_id'),4),
+            'random_list':fetch.get_random(18,4)
         })
         return render_template('magazine.html',**url_dic)
 

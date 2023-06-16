@@ -3,6 +3,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>{{title}}</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">

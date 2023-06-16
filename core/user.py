@@ -1,9 +1,11 @@
 import functools
 from flask import Blueprint, request, render_template, flash, session, redirect, url_for, g
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from core.db import get_db
 from core.urls import init_dic
-from core.fetch import get_collection, get_by_uploader
+from core.fetch import get_collection, get_by_uploader, get_random
+import random
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -14,8 +16,7 @@ def index(user_id):
     if str(session.get('user_id')) != user_id:
         return redirect(url_for('user.route'))
     db = get_db()
-    error = None
-
+    get_random(18)
     user = db.execute(
         "SELECT * FROM user WHERE user_id= ?",
         (user_id,)
@@ -26,10 +27,10 @@ def index(user_id):
         flash(error)
         return redirect(url_for('user.login'))
 
-    if user[4] is None:
+    if user[5] is None:
         head_img = url_for('static', filename="img/user/no_head.png")
     else:
-        head_img = url_for('static', filename="img/user/head_img/" + user[3])
+        head_img = url_for('static', filename="img/user/head_img/" + user[5])
 
     collection_list = get_collection(6, user_id)
     artwork_list = get_by_uploader(6, user_id)
@@ -39,7 +40,7 @@ def index(user_id):
         "WHERE uploader_id=? ",
         (user_id,)
     ).fetchall())
-    url_dic = init_dic(session.get('user_name') + '的空间')
+    url_dic = init_dic(session.get('account') + '的空间')
 
     if user_id == '0':
         review = url_for('admin.index')
@@ -48,7 +49,7 @@ def index(user_id):
 
     url_dic.update({
         'review': review,
-        'email': user[3],
+        'email': user[4],
         'head_img': head_img,
         'collection_list': collection_list,
         'artwork_list': artwork_list,
@@ -61,38 +62,24 @@ def index(user_id):
 
 @bp.route('/signup', methods=('GET', 'POST'))
 def signup():
-    # POST访问方式，进入表单与数据库的注册后台逻辑
     if request.method == 'POST':
-        username = request.form['username']
+        account = request.form['account']
         password = request.form['password']
         email = request.form['email']
         db = get_db()
-        error = None
+        try:
+            db.execute(
+                "INSERT INTO user (account, password, email) VALUES (?, ?, ?)",
+                (account, generate_password_hash(password), email),
+            )
+            db.commit()
+        except db.IntegrityError:
+            error = f'用户 {account} 已存在！'
+        else:
+            flash('恭喜你注册成功~☆')
+            return redirect(url_for('user.login'))
 
-        # 后端验证username、password是否缺失
-        if not username:
-            error = '用户名不能为空！'
-        elif not password:
-            error = '密码不能为空！'
-
-        # 通过验证后，查询数据库，无错误时写入数据，完成注册。有错误反馈。
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (user_name, password, email) VALUES (?, ?, ?)",
-                    (username, generate_password_hash(password), email),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f'用户 {username} 已经注册过！'
-            else:
-                flash('恭喜你注册成功~☆')
-                return redirect(url_for('user.login'))
-
-        # 页面闪现错误提示
         flash(error)
-
-    # GET访问方式，直接返回注册页面
     return render_template('signup.html', **init_dic())
 
 
@@ -100,13 +87,13 @@ def signup():
 def login():
     # POST访问方式，进入表单与数据库的注册后台逻辑
     if request.method == 'POST':
-        username = request.form['username']
+        account = request.form['account']
         password = request.form['password']
         db = get_db()
         error = None
         user = db.execute(
-            "SELECT * FROM user WHERE user_name= ?",
-            (username,)
+            "SELECT * FROM user WHERE account= ?",
+            (account,)
         ).fetchone()
 
         # 后端验证用户是否能查询到，密码hash值是否能比对上
@@ -119,9 +106,9 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['user_id']
-            session['user_name'] = username
+            session['account'] = account
             flash('登陆成功')
-            if username == 'admin':
+            if account == 'admin':
                 return redirect(url_for('admin.index'))
             return redirect(url_for('user.route'))
 
@@ -150,7 +137,61 @@ def configure():
     if user_id is None:
         return redirect(url_for('user.login'))
     if request.method == 'POST':
-        return render_template('configure.html', **init_dic())
+        db = get_db()
+        user_name = request.form['username']
+        try:
+            db.execute(
+                "UPDATE user "
+                "SET user_name = ? "
+                "WHERE user_id = ? ",
+                (user_name, user_id),
+            )
+            db.commit()
+        except db.IntegrityError:
+            flash("昵称更改失败,请重新确认")
+            return redirect(url_for('user.configure'))
+
+        enable_img = request.form['enable_img']
+        if enable_img == "f":
+            flash("昵称更改成功~☆")
+            return redirect(url_for('user.route'))
+
+        head_img = request.files['head_img']
+        db = get_db()
+        if len(head_img.filename) == 0:
+            try:
+                db.execute(
+                    "UPDATE user "
+                    "SET head_img = null "
+                    "WHERE user_id = ? ",
+                    (user_id,)
+                )
+                db.commit()
+            except db.IntegrityError:
+                flash("头像更改失败,请重新确认")
+                return redirect(url_for('user.configure'))
+            flash("已充值为默认头像")
+            return redirect(url_for("user.route"))
+
+        ran = str(random.random())[3:8]
+        filename = str(user_id) + "@" + ran + '.' + head_img.filename.split('.')[-1]
+        head_img.save(
+            'core/static/img/user/head_img/' + filename)
+        try:
+            db.execute(
+                "UPDATE user "
+                "SET head_img = ? "
+                "WHERE user_id = ? ",
+                (filename, user_id)
+            )
+            db.commit()
+        except db.IntegrityError:
+            flash("头像更改失败,请重试")
+            return redirect(url_for('user.configure'))
+        else:
+            flash('修改成功~☆')
+            return redirect(url_for('user.route'))
+
     return render_template('configure.html', **init_dic())
 
 

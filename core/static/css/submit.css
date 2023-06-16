@@ -52,7 +52,7 @@ input {
 	border: none;
 	box-sizing: border-box;
 	padding-left: 0.2rem;
-	font-size: 1.2rem;
+	font-size: 1rem;
 	color: #888;
 	width: 12rem;
 	background-color: #f0f0f0;
@@ -61,7 +61,7 @@ input {
 
 input:focus {
 	background-color: #fff;
-	box-shadow: #a5f 0.1rem 0.1rem 0.3rem;
+	box-shadow: #a5f 0rem 0rem 0.4rem;
 }
 
 input[type="submit"],
@@ -78,9 +78,30 @@ a {
 	cursor: pointer;
 	transition: background-color 0.4s;
 }
+input[type="submit"].disabled{
+	background-color: #888;
+	cursor: default;
+}
+input[type="submit"].disabled:hover{
+	background-color: #888;
+}
+span {
+	width: 6rem;
+	height: 1.6rem;
+	line-height: 1.6rem;
+	font-weight: bold;
+	font-size: 1.2rem;
+	color: #fff;
+	text-align: center;
+	background-color: #a5f;
+	border-radius: 0.3rem;
+	cursor: pointer;
+	transition: background-color 0.4s;
+}
 
 input[type="submit"]:hover,
-a:hover {
+a:hover,
+span:hover {
 	background-color: blueviolet;
 }
 
@@ -89,8 +110,14 @@ hr {
 	width: 100%;
 }
 
+.disabled{
+	background-color: #888;
+}
+.disabled:hover{
+	background-color: #555;
+}
 /*个人设置样式*/
-#head_img{
+#head_img {
 	border-radius: 3rem;
 	width: 6rem;
 	height: 6rem;
@@ -99,11 +126,7 @@ hr {
 	margin-right: 3rem;
 	transition: box-shadow 0.4s;
 }
-#head_img:hover{
+
+#head_img:hover {
 	box-shadow: #a5f 0 0 0.5rem;
-}
-span {
-	font-size: 1.2rem;
-	color: #555;
-	font-weight: bold;
 }

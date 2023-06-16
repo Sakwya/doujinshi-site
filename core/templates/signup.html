@@ -3,6 +3,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>用户注册-Doujinshi</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
 		<style>
 			#root {
 				background-image: url("{{url_for('static',filename='background.jpg')}}") !important;
@@ -15,18 +20,58 @@
 	<body>
 		<div id="root">
 			<div id="main">
-				<form method="post">
+				<form method="post" enctype="multipart/form-data">
 					<fieldset>
 						<legend>SignUp</legend>
 						<ul>
-							<li><label>用户名:</label><input type="text" name="username" /></li>
-							<li><label>密码:</label><input type="password" name="password" /></li>
-							<li><label>邮箱:</label><input type="email" name="email" /></li>
+							<li><label>账户:</label><input type="text" name="account" placeholder="英文数字下划线[4-10]"
+									data-tip="设置后将无法修改" data-valid="isNonEmpty" pattern="[a-zA-Z0-9_]{4,10}"
+									onkeyup="cheak();" /></li>
+							<li><label>密码:</label><input type=" password" name="password" placeholder="英文数字[6-20]"
+									pattern="[a-zA-Z]{6,20}" data-valid="isNonEmpty" onkeyup="cheak();" /> </li>
+							<li><label>邮箱:</label><input type="email" name="email" placeholder="邮箱地址"
+									onkeyup="cheak()" /></li>
 							<li></li>
 							<li></li>
-							<li><input type="submit" value="注册" /></li>
-							<li><hr /></li>
-							<li><a href="{{login}}">登录</a></li>
+							<li><input class="disabled" type="submit" value="注册" disabled="Tr" /></li>
+							<li>
+								<hr />
+							</li>
+							<script type="text/javascript">
+								const account = document.getElementsByTagName("input")[0];
+								const password = document.getElementsByTagName("input")[1];
+								const email = document.getElementsByTagName("input")[2];
+								const submit = document.querySelector("input[type='submit']");
+								const cheak = () => {
+									a = account.value.toString().length;
+									p = password.value.toString().length;
+									e = email.value.toString();
+									if (a < 4 || a > 10) {
+										disable();
+										return
+									}
+									if (p < 6 || p > 20) {
+										disable();
+										return
+									}
+									var address = /^\w+(\.\w+)*@\w+(\.\w+)+$/;
+									console.log(address.test(e))
+									if (!address.test(e)) {
+										disable();
+										return
+									}
+									enable();
+								}
+								const disable = () => {
+									submit.setAttribute("disabled", '')
+									submit.className = 'disabled'
+								}
+								const enable = () => {
+									submit.removeAttribute("disabled")
+									submit.className = ''
+								}
+							</script>
+							<li><a href="{{login}}">去登录</a></li>
 						</ul>
 					</fieldset>
 				</form>

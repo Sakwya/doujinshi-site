@@ -382,6 +382,7 @@ aside>ul>li>a:hover {
 	width: 6rem;
 }
 #user>ul>li>span{
+	margin: 0;
 	color: #888;
 	width: 24rem;
 	overflow-x: visible;

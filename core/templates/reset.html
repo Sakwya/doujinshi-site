@@ -2,31 +2,29 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>用户登录-Doujinshi</title>
-		<style>
-			#root {
-				background-image: url("{{url_for('static',filename='background.jpg')}}") !important;
-			}
-		</style>
+		<title>重置密码-Doujinshi</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/login.css" />
+		<link rel="stylesheet" type="text/css" href="../static/css/submit.css" />
 	</head>
 	<body>
 		<div id="root">
 			<div id="main">
-				<form method="post">
+				<form method="post" enctype="multipart/form-data">
 					<fieldset>
-						<legend>LogIn</legend>
+						<legend>Reset</legend>
 						<ul>
-							<li><label>用户名:</label><input type="text" name="username" /></li>
-							<li><label>密码:</label><input type="password" name="password" /></li>
+							<li><label>功能尚未实现</label></li>
 							<li></li>
 							<li></li>
 							<li></li>
-							<li><input type="submit" value="登录" /></li>
 							<li><hr /></li>
-							<li><a href="{{signup}}">注册</a></li>
+							<li><a href="{{user}}">返回</a></li>
 						</ul>
 					</fieldset>
 				</form>

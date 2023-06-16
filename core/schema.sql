@@ -1,5 +1,5 @@
 --
--- SQLiteStudio v3.4.4 生成的文件，周四 5月 25 19:36:30 2023
+-- SQLiteStudio v3.4.4 生成的文件，周五 6月 16 14:58:52 2023
 --
 -- 所用的文本编码：UTF-8
 --
@@ -10,34 +10,16 @@ BEGIN TRANSACTION;
 DROP TABLE IF EXISTS author;
 
 CREATE TABLE author (
-    author_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    author_id   INTEGER PRIMARY KEY ASC AUTOINCREMENT,
     author_name TEXT    UNIQUE
                         NOT NULL
 );
 
-INSERT INTO author (
-                       author_id,
-                       author_name
-                   )
-                   VALUES (
-                       1,
-                       '王占全'
-                   );
 
-INSERT INTO author (
-                       author_id,
-                       author_name
-                   )
-                   VALUES (
-                       2,
-                       '梁建宁'
-                   );
+-- 表：author_url
+DROP TABLE IF EXISTS author_url;
 
-
--- 表：authorURL
-DROP TABLE IF EXISTS authorURL;
-
-CREATE TABLE authorURL (
+CREATE TABLE author_url (
     author_id   INTEGER,
     platform_id INTEGER,
     author_url  TEXT    UNIQUE
@@ -57,50 +39,25 @@ CREATE TABLE authorURL (
 );
 
 
--- 表：class
-DROP TABLE IF EXISTS class;
+-- 表：collection
+DROP TABLE IF EXISTS collection;
 
-CREATE TABLE class (
-    class_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    class_name TEXT    UNIQUE
-                       NOT NULL
+CREATE TABLE collection (
+    user_id      INTEGER,
+    doujinshi_id INTEGER,
+    PRIMARY KEY (
+        user_id,
+        doujinshi_id
+    ),
+    FOREIGN KEY (
+        user_id
+    )
+    REFERENCES user (user_id),
+    FOREIGN KEY (
+        doujinshi_id
+    )
+    REFERENCES doujinshi (doujinshi_id) 
 );
-
-INSERT INTO class (
-                      class_id,
-                      class_name
-                  )
-                  VALUES (
-                      1,
-                      '漫画'
-                  );
-
-INSERT INTO class (
-                      class_id,
-                      class_name
-                  )
-                  VALUES (
-                      2,
-                      '画集'
-                  );
-
-INSERT INTO class (
-                      class_id,
-                      class_name
-                  )
-                  VALUES (
-                      3,
-                      '公式本'
-                  );
-
-INSERT INTO class (
-                      class_id,
-                      class_name
-                  )
-                  VALUES (
-                      4,
-                      '同人文'
-                  );
 
 
 -- 表：comment
@@ -124,8 +81,8 @@ DROP TABLE IF EXISTS doujinshi;
 CREATE TABLE doujinshi (
     doujinshi_id    INTEGER PRIMARY KEY AUTOINCREMENT,
     author_id       INTEGER,
-    class_id        INTEGER,
-    user_id         INTEGER NOT NULL,
+    type_id         INTEGER NOT NULL,
+    uploader_id     INTEGER NOT NULL,
     doujinshi_name  TEXT    NOT NULL,
     doujinshi_cover TEXT    UNIQUE,
     market          TEXT,
@@ -135,104 +92,41 @@ CREATE TABLE doujinshi (
     )
     REFERENCES author (author_id),
     FOREIGN KEY (
-        class_id
+        type_id
     )
-    REFERENCES class (class_id),
+    REFERENCES type (type_id),
     FOREIGN KEY (
-        user_id
+        uploader_id
     )
     REFERENCES user (user_id) 
 );
 
-INSERT INTO doujinshi (
-                          doujinshi_id,
-                          author_id,
-                          class_id,
-                          user_id,
-                          doujinshi_name,
-                          doujinshi_cover,
-                          market,
-                          pages
-                      )
-                      VALUES (
-                          1,
-                          NULL,
-                          NULL,
-                          1,
-                          '性爱',
-                          NULL,
-                          NULL,
-                          NULL
-                      );
 
-INSERT INTO doujinshi (
-                          doujinshi_id,
-                          author_id,
-                          class_id,
-                          user_id,
-                          doujinshi_name,
-                          doujinshi_cover,
-                          market,
-                          pages
-                      )
-                      VALUES (
-                          2,
-                          NULL,
-                          NULL,
-                          1,
-                          '牛魔',
-                          NULL,
-                          NULL,
-                          NULL
-                      );
+-- 表：doujinshi_tag
+DROP TABLE IF EXISTS doujinshi_tag;
 
-INSERT INTO doujinshi (
-                          doujinshi_id,
-                          author_id,
-                          class_id,
-                          user_id,
-                          doujinshi_name,
-                          doujinshi_cover,
-                          market,
-                          pages
-                      )
-                      VALUES (
-                          3,
-                          NULL,
-                          NULL,
-                          1,
-                          '王占全写真',
-                          NULL,
-                          NULL,
-                          NULL
-                      );
-
-
--- 表：doujinshiTopic
-DROP TABLE IF EXISTS doujinshiTopic;
-
-CREATE TABLE doujinshiTopic (
+CREATE TABLE doujinshi_tag (
     doujinshi_id INTEGER,
-    topic_id     INTEGER,
+    tag_id       INTEGER,
     PRIMARY KEY (
         doujinshi_id,
-        topic_id
+        tag_id
     ),
     FOREIGN KEY (
         doujinshi_id
     )
     REFERENCES doujinshi (doujinshi_id),
     FOREIGN KEY (
-        topic_id
+        tag_id
     )
-    REFERENCES topic (topic_id) 
+    REFERENCES tag (tag_id) 
 );
 
 
--- 表：doujinshiURL
-DROP TABLE IF EXISTS doujinshiURL;
+-- 表：doujinshi_url
+DROP TABLE IF EXISTS doujinshi_url;
 
-CREATE TABLE doujinshiURL (
+CREATE TABLE doujinshi_url (
     doujinshi_id  INTEGER,
     platform_id   INTEGER,
     doujinshi_url TEXT    NOT NULL,
@@ -260,12 +154,22 @@ CREATE TABLE platform (
 );
 
 
--- 表：topic
-DROP TABLE IF EXISTS topic;
+-- 表：tag
+DROP TABLE IF EXISTS tag;
 
-CREATE TABLE topic (
-    topic_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    topic_name TEXT    NOT NULL
+CREATE TABLE tag (
+    tag_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    tag_name TEXT    NOT NULL
+);
+
+
+-- 表：type
+DROP TABLE IF EXISTS type;
+
+CREATE TABLE type (
+    type_id   INTEGER  PRIMARY KEY AUTOINCREMENT,
+    type_name TEXT (6) UNIQUE
+                       NOT NULL
 );
 
 
@@ -273,218 +177,98 @@ CREATE TABLE topic (
 DROP TABLE IF EXISTS unconfirmed;
 
 CREATE TABLE unconfirmed (
-    doujinshi_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    review_id       INTEGER     PRIMARY KEY AUTOINCREMENT,
     author_id       INTEGER,
-    class_id        INTEGER,
-    user_id         INTEGER NOT NULL,
-    doujinshi_name  TEXT    NOT NULL,
-    doujinshi_cover TEXT    UNIQUE,
+    type_id         INTEGER,
+    uploader_id     INTEGER     NOT NULL,
+    doujinshi_name  TEXT        NOT NULL,
+    doujinshi_cover TEXT        UNIQUE,
     market          TEXT,
     pages           INTEGER,
+    condition       INTEGER (1) DEFAULT (0) 
+                                NOT NULL,
     FOREIGN KEY (
         author_id
     )
     REFERENCES author (author_id),
     FOREIGN KEY (
-        class_id
+        type_id
     )
-    REFERENCES class (class_id),
+    REFERENCES type (type_id),
     FOREIGN KEY (
-        user_id
+        uploader_id
     )
     REFERENCES user (user_id) 
 );
-
-INSERT INTO unconfirmed (
-                            doujinshi_id,
-                            author_id,
-                            class_id,
-                            user_id,
-                            doujinshi_name,
-                            doujinshi_cover,
-                            market,
-                            pages
-                        )
-                        VALUES (
-                            1,
-                            1,
-                            3,
-                            1,
-                            '数据库原理',
-                            '数据库原理.png',
-                            'ww',
-                            114
-                        );
-
-INSERT INTO unconfirmed (
-                            doujinshi_id,
-                            author_id,
-                            class_id,
-                            user_id,
-                            doujinshi_name,
-                            doujinshi_cover,
-                            market,
-                            pages
-                        )
-                        VALUES (
-                            2,
-                            1,
-                            3,
-                            1,
-                            '数据库原理',
-                            '数据库原理.jpg',
-                            'ww',
-                            114
-                        );
-
-INSERT INTO unconfirmed (
-                            doujinshi_id,
-                            author_id,
-                            class_id,
-                            user_id,
-                            doujinshi_name,
-                            doujinshi_cover,
-                            market,
-                            pages
-                        )
-                        VALUES (
-                            3,
-                            1,
-                            3,
-                            1,
-                            '数据库原理',
-                            '数据库原理531.jpg',
-                            'ww',
-                            114
-                        );
-
-INSERT INTO unconfirmed (
-                            doujinshi_id,
-                            author_id,
-                            class_id,
-                            user_id,
-                            doujinshi_name,
-                            doujinshi_cover,
-                            market,
-                            pages
-                        )
-                        VALUES (
-                            4,
-                            1,
-                            3,
-                            1,
-                            '数据库原理',
-                            '数据库原理358.jpg',
-                            'ww',
-                            114
-                        );
-
-INSERT INTO unconfirmed (
-                            doujinshi_id,
-                            author_id,
-                            class_id,
-                            user_id,
-                            doujinshi_name,
-                            doujinshi_cover,
-                            market,
-                            pages
-                        )
-                        VALUES (
-                            5,
-                            1,
-                            3,
-                            1,
-                            '数据库原理',
-                            '数据库原理48922.jpg',
-                            'ww',
-                            114
-                        );
 
 
 -- 表：user
 DROP TABLE IF EXISTS user;
 
 CREATE TABLE user (
-    user_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name TEXT    NOT NULL
+    user_id   INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+    account   TEXT    NOT NULL
                       UNIQUE,
+    user_name TEXT    UNIQUE
+                      NOT NULL,
     password  TEXT    NOT NULL,
-    email     TEXT    NOT NULL
+    email     TEXT    NOT NULL,
+    head_img  TEXT    UNIQUE
 );
 
-INSERT INTO user (
-                     user_id,
-                     user_name,
-                     password,
-                     email
-                 )
-                 VALUES (
-                     1,
-                     '王予嘉',
-                     'pbkdf2:sha256:260000$rTia2vvfeo9VXWef$f871d8dad6d41810e8a4def6cd98f0846ed361f791fea774a8dcc35ef7dd77b9',
-                     '1041173672@qq.com'
-                 );
 
-INSERT INTO user (
-                     user_id,
-                     user_name,
-                     password,
-                     email
-                 )
-                 VALUES (
-                     2,
-                     '司盛鑫',
-                     'pbkdf2:sha256:260000$neYmo2CbSJ3V9iwx$50da7ebd8c3d31873ca5b970800f1ca8cd497a63ba829e0bcaf826fbe7144ead',
-                     '995514826@qq.com'
-                 );
+-- 视图：doujinshi_part
+DROP VIEW IF EXISTS doujinshi_part;
+CREATE VIEW doujinshi_part AS
+    SELECT doujinshi_id,
+           doujinshi_name,
+           doujinshi_cover,
+           type_id
+      FROM doujinshi;
 
 
--- 表：usercollection
-DROP TABLE IF EXISTS usercollection;
+-- 视图：illustration
+DROP VIEW IF EXISTS illustration;
+CREATE VIEW illustration AS
+    SELECT doujinshi_id,
+           doujinshi_name,
+           doujinshi_cover,
+           type_id
+      FROM doujinshi
+     WHERE type_id = 2;
 
-CREATE TABLE usercollection (
-    user_id      INTEGER,
-    doujinshi_id INTEGER,
-    PRIMARY KEY (
-        user_id,
-        doujinshi_id
-    ),
-    FOREIGN KEY (
-        user_id
-    )
-    REFERENCES user (user_id),
-    FOREIGN KEY (
-        doujinshi_id
-    )
-    REFERENCES doujinshi (doujinshi_id) 
-);
 
-INSERT INTO usercollection (
-                               user_id,
-                               doujinshi_id
-                           )
-                           VALUES (
-                               1,
-                               3
-                           );
+-- 视图：magazine
+DROP VIEW IF EXISTS magazine;
+CREATE VIEW magazine AS
+    SELECT doujinshi_id,
+           doujinshi_name,
+           doujinshi_cover,
+           type_id
+      FROM doujinshi
+     WHERE type_id = 4;
 
-INSERT INTO usercollection (
-                               user_id,
-                               doujinshi_id
-                           )
-                           VALUES (
-                               1,
-                               1
-                           );
 
-INSERT INTO usercollection (
-                               user_id,
-                               doujinshi_id
-                           )
-                           VALUES (
-                               1,
-                               2
-                           );
+-- 视图：manga
+DROP VIEW IF EXISTS manga;
+CREATE VIEW manga AS
+    SELECT doujinshi_id,
+           doujinshi_name,
+           doujinshi_cover,
+           type_id
+      FROM doujinshi
+     WHERE type_id = 1;
+
+
+-- 视图：novel
+DROP VIEW IF EXISTS novel;
+CREATE VIEW novel AS
+    SELECT doujinshi_id,
+           doujinshi_name,
+           doujinshi_cover,
+           type_id
+      FROM doujinshi
+     WHERE type_id = 3;
 
 
 COMMIT TRANSACTION;

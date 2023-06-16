@@ -2,10 +2,12 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>用户登录-Doujinshi</title>
-		<style>
-			
-		</style>
+		<title>修改个人资料-Doujinshi</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 		<link rel="stylesheet" type="text/css" href="../static/css/submit.css" />
@@ -13,18 +15,29 @@
 	<body>
 		<div id="root">
 			<div id="main">
-				<form method="post">
+				<form method="post" enctype="multipart/form-data">
 					<fieldset>
 						<legend>Configure</legend>
 						<ul>
-							<li><hr /></li>
-							<li><label>用户名:</label><input type="text" name="user_name" /></li>
-							<li><hr /></li>
-							<li style="align-items: flex-start;z-index: 10;"><div id="head_img" style="background-image:url('../static/img/user/no_head.png');"></div></li>
-							<li><input id="file-input" type="file" accept="image/*" name="head_img" style="display: none;" /></li>
 							<li></li>
-							<li><span id="upload-span">更换头像</span></li>
-							<li><hr /></li>
+							<li><label>昵称:</label><input type="text" name="username" data-valid="isNonEmpty"
+									placeholder="无特殊字符[2-20]" pattern="[^\n,$*%.? ]{2,20}" /></li>
+							<li><label>邮箱:</label><input type="email" name="email" placeholder="暂时无法修改"/></li>
+							<li><input type="text" name="enable_img" data-valid="isNonEmpty" pattern="[tf]"
+									style="display: none;" />
+								<hr />
+							</li>
+							<li style="align-items: flex-start;z-index: 10;">
+								<div id="head_img" style="background-image:url('../static/img/user/no_head.png');">
+								</div>
+							</li>
+							<li><input id="file-input" type="file" accept="image/*" name="head_img"
+									style="display: none;" /></li>
+							<li></li>
+							<li><span id="click-span" class="disabled">更换头像</span></li>
+							<li>
+								<hr />
+							</li>
 							<li><input type="submit" value="提交" /></li>
 							<li></li>
 							<script type="text/javascript">
@@ -34,14 +47,26 @@
 								document.getElementById("head_img").addEventListener("click", () => {
 									upload();
 								});
-								document.getElementById("upload-span").addEventListener("click", () => {
-									upload();
-								});
 								document.getElementById("file-input").addEventListener("change", () => {
 									let head_img = URL.createObjectURL(document.getElementById("file-input").files[0]);
 									document.getElementById("head_img").style.backgroundImage = "url(" + head_img + ")";
 								});
+								const username = document.getElementsByTagName("input")[0];
+								username.value = "{{username}}";
+								const enable_img = document.getElementsByTagName("input")[2];
+								enable_img.value = "f";
+								const click_span = document.getElementById("click-span");
+								click_span.addEventListener("click", () => {
+									if (enable_img.value == "f"){
+										enable_img.value = "t";
+										click_span.className = "";
+									}else{
+										enable_img.value = "f";
+										click_span.className = "disabled";
+									}
+								})
 							</script>
+							<li><a href="{{user}}">返回</a></li>
 						</ul>
 					</fieldset>
 				</form>

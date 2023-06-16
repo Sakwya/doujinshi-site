@@ -1,4 +1,5 @@
 from flask import url_for, session
+from core.fetch import get_username
 
 
 def init_dic(title="未命名的页面"):
@@ -8,7 +9,8 @@ def init_dic(title="未命名的页面"):
     url_dic = {
         'title': title,
         'index': url_for('index'),
-        'username': session.get('user_name'),
+        'account': session.get('account'),
+        'username': get_username(session.get('user_id')),
         # 用户登录
         'login': url_for('user.login'),
         'signup': url_for('user.signup'),
@@ -21,10 +23,10 @@ def init_dic(title="未命名的页面"):
         'user': url_for('user.route'),
         'doujinshi': url_for('doujinshi.home'),
         'upload': url_for('upload.upload'),
-        'logout': url_for('user.login')+"?logout=1",
+        'logout': url_for('user.login') + "?logout=1",
         # 个人设置
         'configure': url_for('user.configure'),
-        'reset':url_for('user.reset'),
+        'reset': url_for('user.reset'),
         # 管理员功能
         'dev': dev,
         'admin': url_for('admin.index')
