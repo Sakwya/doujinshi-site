@@ -2,84 +2,222 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>DoujinshiClub</title>
-		<style>
-			#cover{
-				background-image: url({{doujinshi_cover}});
-			}
-		</style>
+		<title>{{title}}</title>
 		<script type="text/javascript">
-			{% for message in get_flashed_messages() %}
-			window.alert("{{message}}") 
-			{% endfor %}
 		</script>
-		<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/artwork.css">
 	</head>
 	<body>
 		<div id="root">
-			<div id="header">
-				<div class="rem60">
-					<div id="mail">
-						<div id="mail-box">
-							<a href="{{review}}">待审核内容:{{unconfirmed}}</a>
-							<span></span>
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title">DouJinShi</span></div>
 						</div>
+						<div class="search">
+
+						</div>
+						<div class="right">
+
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
+							</div>
+						</div>
+						<div><span class="title">DouJinShi</span></div>
 					</div>
+					<ul>
+						<li><span>首页</span></li>
+						<li><a href="{{manga}}">漫画</a></li>
+						<li><a href="{{illustration}}">画集</a></li>
+						<li><a href="{{novel}}">小说</a></li>
+						<li><a href="{{magazine}}">杂志</a></li>
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a class="active">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						{% endif %}
+					</ul>
+					<script type="text/javascript">
+						const aside = document.querySelector("aside")
+						const mask = document.querySelector(".mask")
+						const discover = () => {
+							mask.style.display = "none";
+						}
+						const changecolor = () => {
+							mask.style.opacity = "0.2";
+						}
+						const asideon = () => {
+							aside.style.left = "0rem";
+							mask.style.display = "block";
+							setTimeout(changecolor, 0)
+						}
+						const asideoff = () => {
+							aside.style.left = "-15rem";
+							mask.style.opacity = "0";
+							setTimeout(discover, 600)
+						}
+						mask.addEventListener("click", () => {
+							asideoff()
+						})
+					</script>
+				</aside>
+				<div>
+					<section id="artwork">
+						<div>
+							<div id="cover" style="background-image:url('{{doujinshi_cover}}');"></div>
+							<div>
+								<span><label><span>标题:</span></label><a><span>{{doujinshi_name}}</span></a></span>
+								<span><label><span>作者:</span></label><a
+										href="{{author_page}}"><span>{{author_name}}</span></a></span>
+								<span><label><span>类别:</span></label><a><span>{{type}}</span></a></span>
+								{% if market != None %}
+								<span><label><span>同人展:</span></label><a><span>{{market}}</span></a></span>
+								{%endif%}
+								<span><label><span>页数:</span></label><a><span>{{pages}}</span></a></span>
+								<span><label><span>上传者:</span></label><a><span>{{uploader_name}}</span></a></span>
+							</div>
+						</div>
+					</section>
 				</div>
-			</div>
-			<div id="leftside">
-				<div class="columnflex">
-					<div></div>
-					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
-					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
-					<div><a href="{{index}}"><span>主页</span></a></div>
-					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
-				</div>
-			</div>
-			<div class="fill">
-				<div id="main">
-						<div class="fill44 bg_shadow">
-							<div id ="artwork">
-								<div id="cover"></div>
+				<div>
+					<section id="comment">
+						<div>
+							<div id="tools_bar">
+								<div class="{{collected}}" onclick="collect();"><span>收藏<span>✔</span></span></div>
+								<span></span>
+								<script type="text/javascript">
+									var xmlhttp;
+									if (window.XMLHttpRequest) {
+										xmlhttp = new XMLHttpRequest();
+
+									} else {
+										xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+									}
+									const collect = () => {
+										xmlhttp.open('POST', '{{collect}}', false)
+										xmlhttp.send()
+										collect_span.className = xmlhttp.responseText;
+									}
+									const collect_span = document.getElementById("tools_bar").children[0]
+								</script>
+							</div>
+							<form id="comment_input" method="post">
+								<div id="head_img" style="background-image: url({{head_img}});"
+								onclick="window.location.href='{{user}}';"></div>
 								<div>
-									<span><label>标题:</label><a>{{doujinshi_name}}</a></span>
-									<span><label>作者:</label><a href="{{author_page}}">{{author_name}}</a></span>
-									<span><label>类别:</label><a>{{class}}</a></span>
-									{% if market != None %}
-									<span><label>market:</label><a>{{market}}</a></span>
-									{%endif%}
-									<span><label>页数:</label><a>{{pages}}</a></span>
+									<textarea name="comment" required></textarea><input id="submit" type="submit"
+										style="display: none;"/>
 								</div>
-							</div>
-							<hr />
-							<div id="comment">
-								<div id="comment_input">
-									<div id="head">{{username[0]}}</div>
-									<div id="comment_space">
-										<form>
-											<textarea></textarea>
-											<div id="comment_button" class="submit">评论</div>
-											<input id="submit" type="submit"/>
-											<script>
-												const submit=()=>{
-													return document.getElementById("submit").click();
-												};
-												document.getElementById("comment_button").addEventListener("click",()=>{
-													submit();
-												});
-											</script>
-										</form>
-									</div>
+								<div id="comment_button">
+									<span>评论</span>
 								</div>
-								<div id="comment_list">
-									<div></div>
-									<div></div>
-								</div>
+								<script>
+									const submit = () => {
+										return document.getElementById("submit").click();
+									};
+									document.getElementById("comment_button").addEventListener("click", () => {
+										submit();
+									});
+								</script>
+							</form>
+							<div id="comment_list">
+								<div><label>评论区</label></div>
+								<ul>
+									{% if comment_list|length == 0 %}
+									<span>暂无评论</span>
+									{% else %}
+									{% for comment in comment_list %}
+									<li>
+										<div class="head_img" style="background-image: url('{{comment[1]}}');"
+										onclick="window.location.href='{{comment[2]}}';"></div>
+										<div>
+											<div><a href="{{comment[2]}}"><span>{{comment[0]}}</span></a><label><span>{{comment[4]}}</span></label></div>
+											<div><pre>{{comment[3]}}</pre></div>
+										</div>
+									</li>
+									{% endfor %}
+									{% endif %}
+								</ul>
 							</div>
 						</div>
-					</div>
+					</section>
 				</div>
-			</div>
-			<div id="footer"></div>
+			</article>
+		</div>
 	</body>
 </html>

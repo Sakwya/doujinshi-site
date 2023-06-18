@@ -3,50 +3,246 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>{{title}}</title>
-		<style>
-			#cover{
-				background-image: url("{{doujinshi_cover}}"");
-			}
-		</style>
 		<script type="text/javascript">
 			{% for message in get_flashed_messages() %}
 			window.alert("{{message}}") 
 			{% endfor %}
 		</script>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
-		<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/upload.css" />
 	</head>
 	<body>
 		<div id="root">
-			<div id="header">
-			</div>
-			<div id="leftside">
-				<div class="columnflex">
-					<div></div>
-					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
-					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
-					<div><a href="{{index}}"><span>主页</span></a></div>
-					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
-				</div>
-			</div>
-			<div class="fill">
-				<div id="main">
-					<div id ="unconfirmed_info">
-						<div id ="artwork">
-							<div id="cover"></div>
-							<div>
-								<span><label>标题:</label><a>{{doujinshi_name}}</a></span>
-								<span><label>作者:</label><a href="{{author_page}}">{{author_name}}</a></span>
-								<span><label>类别:</label><a>{{class}}</a></span>
-								{% if market != None %}
-								<span><label>market:</label><a>{{market}}</a></span>
-								{%endif%}
-								<span><label>页数:</label><a>{{pages}}</a></span>
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title">DouJinShi</span></div>
+						</div>
+						<div class="search">
+
+						</div>
+						<div class="right">
+
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
 							</div>
 						</div>
+						<div><span class="title">DouJinShi</span></div>
 					</div>
+					<ul>
+						<li><span>首页</span></li>
+						<li><a href="{{manga}}">漫画</a></li>
+						<li><a href="{{illustration}}">画集</a></li>
+						<li><a href="{{novel}}">小说</a></li>
+						<li><a href="{{magazine}}">杂志</a></li>
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a class="active"">审核中:{{review_id}}</a></li>
+						{% endif %}
+					</ul>
+					<script type=" text/javascript">
+								const aside = document.querySelector("aside")
+								const mask = document.querySelector(".mask")
+								const discover = () => {
+								mask.style.display = "none";
+								}
+								const changecolor = () => {
+								mask.style.opacity = "0.2";
+								}
+								const asideon = () => {
+								aside.style.left = "0rem";
+								mask.style.display = "block";
+								setTimeout(changecolor, 0)
+								}
+								const asideoff = () => {
+								aside.style.left = "-15rem";
+								mask.style.opacity = "0";
+								setTimeout(discover, 600)
+								}
+								mask.addEventListener("click", () => {
+								asideoff()
+								})
+								</script>
+				</aside>
+				<div>
+					<form method="post" enctype="multipart/form-data">
+						<fieldset>
+							<legend>ReView</legend>
+							<ul class="form">
+								<li style="grid-area: 1/1/3/2;"><label>标题:</label><input type="text"
+										name="doujinshi_name" required /></li>
+								<li style="grid-area: 4/1/6/2;"><label>作者:</label><input list="author" type="text"
+										name="author_name" /></li>
+								<datalist id="author">
+									{%for author in authors %}
+									<option value="{{author}}">
+										{% endfor %}
+								</datalist>
+								<li style="grid-area: 7/1/9/2;">
+									<label>类型:</label><select name="type_id">
+										<option value="1">漫画/漫画本</option>
+										<option value="2">画册/画本</option>
+										<option value="3">同人文</option>
+										<option value="4">刊物/杂志</option>
+									</select>
+								</li>
+								<li style="grid-area: 10/1/12/2;"><label>同人展:</label><input type="text" name="market" />
+								</li>
+								<li style="grid-area: 13/1/15/2;"><label>页数:</label><input type="number" name="pages" />
+								</li>
+								<li style="grid-area: 16/1/18/2;"><label>封面:</label>
+									<input type="number" name="cover_type" style="display: none;" required />
+									<input id="file-input" type="file" accept="image/*" name="doujinshi_cover" />
+									<ul>
+										<li><span onclick="set_0()">默认</span></li>
+										<li><span onclick="set_1()">去除</span></li>
+										<li><span onclick="set_2()">重传</span></li>
+									</ul>
+								</li>
+								<li style="grid-area: 1/2/17/3;justify-content: center;">
+									<div id="cover"></div>
+								</li>
+								<li style="grid-area: 18/1/19/3;">
+									<hr />
+								</li>
+								<input type="number" name="review_id" value="{{review_id}}" style="display: none;" required />
+								<input type="number" name="review_id" value="{{review_id}}" style="display: none;" form="ban" required />
+								<input type="number" name="uploader_id" value="{{uploader_id}}" style="display: none;" required />
+								<li style="grid-area: 20/1/22/2;"><input type="submit" value="提交" /></li>
+								<li style="grid-area: 23/1/24/2;"><input type="submit" value="删除" id="ban-span" form="ban"/></li>
+								<li style="grid-area: 20/2/22/3;"><a href="{{review}}">返回</a></li>
+							</ul>
+							<script>
+								const upload = () => {
+									return document.getElementById("file-input").click();
+								};
+								document.getElementById("cover").addEventListener("click", () => {
+									upload();
+								});
+								document.getElementById("file-input").addEventListener("change", () => {
+									cover_url = URL.createObjectURL(document.getElementById("file-input").files[0]);
+									document.getElementById("cover").style.backgroundImage = "url(" + cover_url + ")";
+								});
+								//初始化审核内容
+								document.body.getElementsByTagName("input")[0].value = "{{doujinshi_name}}";
+								document.body.getElementsByTagName("input")[1].value = "{{author_name}}";
+								document.body.getElementsByTagName("select")[0].value = "{{type_id}}";
+								document.body.getElementsByTagName("input")[2].value = "{{market}}";
+								document.body.getElementsByTagName("input")[3].value = "{{pages}}";
+								//定义封面上传类型
+								const set_0 = () => {
+									//默认
+									cover_type.value = 0;
+									cover.style.backgroundImage = "url('{{doujinshi_cover}}')";
+									span_0.className="enable"
+									span_1.className=""
+									span_2.className=""
+								}
+								const set_1 = () => {
+									//去除封面
+									cover_type.value = 1;
+									cover.style.backgroundImage = "url({{url_for('static', filename='review/no_cover.png')}})";
+									span_0.className=""
+									span_1.className="enable"
+									span_2.className=""
+								}
+								const set_2 = () => {
+									//重传封面
+									cover_type.value = 2;
+									cover.style.backgroundImage = "url(" + cover_url + ")";
+									span_0.className=""
+									span_1.className=""
+									span_2.className="enable"
+								}
+								const cover = document.getElementById("cover");
+								const cover_type = document.body.getElementsByTagName("input")[4];
+								const span_0 = document.body.querySelectorAll("ul>li>ul>li")[0];
+								const span_1 = document.body.querySelectorAll("ul>li>ul>li")[1];
+								const span_2 = document.body.querySelectorAll("ul>li>ul>li")[2];
+								set_0();
+							</script>
+						</fieldset>
+					</form>
+					<form action="{{url_for('admin.ban')}}" method="post" id="ban" style="display: none;"></form>
 				</div>
-			</div>
-			<div id="footer"></div>
+			</article>
+		</div>
 	</body>
 </html>

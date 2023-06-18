@@ -27,7 +27,7 @@ fieldset>ul.form{
 	list-style: none;
 	display: grid;
 	grid-template-columns: 20rem 20rem;
-	grid-template-rows: 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem;/*22列*/
+	grid-template-rows: 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem;/*24列*/
 	flex-direction: column;
 }
 fieldset>ul{
@@ -41,14 +41,6 @@ fieldset>ul>li{
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-}
-fieldset>ul>li>div{
-	margin: 0;
-	background-size: cover;
-	background-color: #a5f;
-}
-fieldset>ul>li>div:hover{
-	background-color: #a5f;
 }
 label{
 	font-size: 1.2rem;
@@ -65,9 +57,9 @@ input{
 	background-color: #f0f0f0;
 	transition: background-color,box-shadow 0.2s;
 }
-input:focus{
+input:focus {
 	background-color: #fff;
-	box-shadow: #a5f 0.1rem 0.1rem 0.3rem;
+	box-shadow: #a5f 0rem 0rem 0.4rem;
 }
 input[type="file"]{
 	display: none;
@@ -102,7 +94,7 @@ select,#upload-span{
 	color: #fff;
 	text-align: center;
 	background-color: #a5f;
-	border-radius: 0.3rem;
+	border-radius: 0.4rem;
 	cursor: pointer;
 	transition: background-color 0.4s;
 }
@@ -115,4 +107,49 @@ hr{
 	border-right: none;
 	border-color: #a5f;
 	width: 100%;
+}
+#cover{
+	margin: 0;
+	cursor: pointer;
+	width: 10rem;
+	height: 16rem;
+	background-color: #a5f;
+	background-size: cover;
+	background-position: 50% 50%;
+	transition: box-shadow 0.4s;
+}
+#cover:hover {
+	box-shadow: #a5f 0 0 0.5rem;
+}
+#ban-span{
+	background-color: red;
+	transition: background-color 0.4s;
+}
+#ban-span:hover{
+	background-color: darkred;
+}
+ul>li>ul{
+	width: 14rem;
+	justify-content: space-between;
+	display: inline-flex;
+}
+ul>li>ul>li{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	border-radius: 0.4rem;
+	background-color: #888;
+	transition: background-color 0.4s;
+}
+ul>li>ul>li>span{
+	margin: 0 auto;
+	color: #fff;
+	font-weight: bold;
+	padding: 0 1rem;
+}
+ul>li>ul>li:hover{
+	background-color: #555;
+}
+ul>li>ul>li.enable{
+	background-color: #a5f;
 }

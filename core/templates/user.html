@@ -110,6 +110,11 @@
 						<li><span>个人设置</span></li>
 						<li><a href="{{configure}}">编辑个人资料</a></li>
 						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						{% endif %}
 					</ul>
 					<script type="text/javascript">
 						const aside = document.querySelector("aside")
@@ -141,10 +146,11 @@
 					</section>
 				</div>
 				<div>
-					<section id="user">
-						<div style="background-image: url('{{head_img}}');"> </div>
+					<section id="info">
+						<div id="head_img" style="background-image: url('{{head_img}}');"> </div>
 						<ul>
 							<li><label>Email:</label><span>{{email}}</span></li>
+							<li><label>上传作品数:</label><span>{{artwork_num}}</span></li>
 							<li><label>待审核内容:</label><span>{{unconfirmed_num}}</span></li>
 						</ul>
 					</section>

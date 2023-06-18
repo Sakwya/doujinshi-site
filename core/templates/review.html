@@ -2,46 +2,177 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>{{title}}</title>
-		<style>
-		</style>
+		<title>审核-管理员工具</title>
 		<script type="text/javascript">
 			{% for message in get_flashed_messages() %}
 			window.alert("{{message}}") 
 			{% endfor %}
 		</script>
-		<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
 	</head>
 	<body>
 		<div id="root">
-			<div id="header">
-			</div>
-			<div id="leftside">
-				<div class="columnflex">
-					<div></div>
-					<div><a href="{{user}}"><span>用户: {{username}}</span></a></div>
-					<div><a href="{{doujinshi}}"><span>同人志</span></a></div>
-					<div><a href="{{index}}"><span>主页</span></a></div>
-					<div><a href="{{login}}?logout=1"><span>退出登录</span></a></div>
-				</div>
-			</div>
-			<div class="fill">
-				<div id="main">
-					{% if review_info_list|length == 0 %}
-						<div id="topic">
-							<span class="gradient"><a href="{{admin}}">审核完毕</a></span>
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title">DouJinShi</span></div>
 						</div>
-					{% else %}
-					<div id ="review" class="line_box">
-						<div class="line_top"></div>
-						{% for review_info in review_info_list %}
-						<div><a href="review/{{review_info[0]}}"><span>{{review_info[1]}}<span></span><span>{{review_info[2]}}</span></a></div>
-						{% endfor %}
-						<div class="line_bottom"></div>
+						<div class="search">
+
+						</div>
+						<div class="right">
+
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
+							</div>
+						</div>
+						<div><span class="title">DouJinShi</span></div>
 					</div>
-					{% endif %}
+					<ul>
+						<li><span>首页</span></li>
+						<li><a href="{{manga}}">漫画</a></li>
+						<li><a href="{{illustration}}">画集</a></li>
+						<li><a href="{{novel}}">小说</a></li>
+						<li><a href="{{magazine}}">杂志</a></li>
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a class="active">审核</a></li>
+						{% endif %}
+					</ul>
+					<script type="text/javascript">
+						const aside = document.querySelector("aside")
+						const mask = document.querySelector(".mask")
+						const discover = () => {
+							mask.style.display = "none";
+						}
+						const changecolor = () => {
+							mask.style.opacity = "0.2";
+						}
+						const asideon = () => {
+							aside.style.left = "0rem";
+							mask.style.display = "block";
+							setTimeout(changecolor, 0)
+						}
+						const asideoff = () => {
+							aside.style.left = "-15rem";
+							mask.style.opacity = "0";
+							setTimeout(discover, 600)
+						}
+						mask.addEventListener("click", () => {
+							asideoff()
+						})
+					</script>
+				</aside>
+				<div>
+					<section id="info">
+						<div><span>审核</span></div>
+						<ul>
+							<li><label>待审核数:</label><span>{{unconfirmed_num}}</span></li>
+							<li><label>未通过数:</label><span>{{ban_num}}</span></li>
+							<li><label>通过审核数:</label><span>{{confirmed_num}}</span></li>
+						</ul>
+					</section>
 				</div>
-			</div>
-			<div id="footer"></div>
+				<div>
+					<section>
+						<ul class="list">
+							<div>
+								<label><span>类型</span></label><label><span>编号</span></label><label><span>同人志名称</span></label><label><span>上传者</span></label><label style="opacity: 0;"></label>
+							</div>
+							{% if unconfirmed_num == 0 %}
+							<div style="font-weight: bold;color: #555;margin: 2rem 0;">已全部审核完毕</div>
+							{% else %}
+							{% for unconfirmed in unconfirmed_list %}
+							<div>
+								<span><a>{{unconfirmed[0]}}</a></span>
+								<span><a>{{unconfirmed[1]}}</a></span>
+								<span><a>{{unconfirmed[2]}}</a></span>
+								<span><a>{{unconfirmed[3]}}</a></span>
+								<span><a href="{{unconfirmed[4]}}">审核</a></span>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+			</article>
+		</div>
 	</body>
 </html>

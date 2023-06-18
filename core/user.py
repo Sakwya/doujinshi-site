@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from core.db import get_db
 from core.urls import init_dic
-from core.fetch import get_collection, get_by_uploader, get_random
+from core.fetch import get_collection, get_by_uploader, get_username
 import random
 
 bp = Blueprint('user', __name__, url_prefix='/user')
@@ -12,11 +12,10 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 
 @bp.route('/<user_id>')
 def index(user_id):
-    # 验证登录
-    if str(session.get('user_id')) != user_id:
-        return redirect(url_for('user.route'))
+    if session.get('user_id') is None:
+        flash("请先进行登录")
+        return redirect(url_for('user.login'))
     db = get_db()
-    get_random(18)
     user = db.execute(
         "SELECT * FROM user WHERE user_id= ?",
         (user_id,)
@@ -32,28 +31,36 @@ def index(user_id):
     else:
         head_img = url_for('static', filename="img/user/head_img/" + user[5])
 
-    collection_list = get_collection(6, user_id)
-    artwork_list = get_by_uploader(6, user_id)
+    artwork_num = db.execute(
+        "SELECT COUNT(*) FROM doujinshi "
+        "WHERE uploader_id = ?",
+        (user_id,)
+    ).fetchone()[0]
 
-    unconfirmed = len(db.execute(
-        "SELECT * FROM unconfirmed "
+    url_dic = init_dic(user[2] + '的个人空间')
+
+    if str(session.get('user_id')) != user_id:
+        url_dic.update({
+            'username': user[2],
+            'email': user[4],
+            'head_img': head_img,
+            'artwork_num': artwork_num,
+            'artwork_list': get_by_uploader(6, user_id),
+        })
+        return render_template('visitor.html', **url_dic)
+
+    unconfirmed_num = db.execute(
+        "SELECT COUNT(*) FROM unconfirmed "
         "WHERE uploader_id=? ",
         (user_id,)
-    ).fetchall())
-    url_dic = init_dic(session.get('account') + '的空间')
-
-    if user_id == '0':
-        review = url_for('admin.index')
-    else:
-        review = None
-
+    ).fetchone()[0]
     url_dic.update({
-        'review': review,
         'email': user[4],
         'head_img': head_img,
-        'collection_list': collection_list,
-        'artwork_list': artwork_list,
-        'unconfirmed_num': unconfirmed,
+        'artwork_num': artwork_num,
+        'collection_list': get_collection(6, user_id),
+        'artwork_list': get_by_uploader(6, user_id),
+        'unconfirmed_num': unconfirmed_num,
     })
 
     # GET访问方式，直接返回登陆页面
@@ -69,8 +76,8 @@ def signup():
         db = get_db()
         try:
             db.execute(
-                "INSERT INTO user (account, password, email) VALUES (?, ?, ?)",
-                (account, generate_password_hash(password), email),
+                "INSERT INTO user (account,user_name, password, email) VALUES (?, ?, ?,?)",
+                (account, account, generate_password_hash(password), email),
             )
             db.commit()
         except db.IntegrityError:
@@ -107,9 +114,7 @@ def login():
             session.clear()
             session['user_id'] = user['user_id']
             session['account'] = account
-            flash('登陆成功')
-            if account == 'admin':
-                return redirect(url_for('admin.index'))
+            flash('登陆成功~☆')
             return redirect(url_for('user.route'))
 
         # 页面闪现错误提示

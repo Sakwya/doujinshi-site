@@ -35,6 +35,7 @@ def init_dic(title="未命名的页面"):
         'reset': url_for('user.reset'),
         # 管理员功能
         'dev': dev,
-        'admin': url_for('admin.index')
+        'admin': url_for('admin.index'),
+        'review': url_for('admin.review'),
     }
     return url_dic

@@ -3,6 +3,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>上传作品-DouJinShi</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
@@ -103,11 +108,14 @@
 						<li><a href="{{user}}">主页</a></li>
 						<li><a class="active">上传</a></li>
 						<li><a href="{{logout}}">退出登录</a></li>
-						<li><span>设置</span></li>
-						<li><a></a></li>
-						<li><a></a></li>
-						<li><a></a></li>
-						<li><a></a></li>
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						{% endif %}
 					</ul>
 					<script type="text/javascript">
 						const aside = document.querySelector("aside")
@@ -146,9 +154,10 @@
 										{% endfor %}
 								</datalist>
 								<li style="grid-area: 7/1/9/2;"><label>类型:</label><select name="type_id">
-										{%for class in classes %}
-										<option value="{{class[0]}}">{{class[1]}}</option>
-										{% endfor %}
+										<option value="1">漫画/漫画本</option>
+										<option value="2">画册/画本</option>
+										<option value="3">同人文</option>
+										<option value="4">刊物/杂志</option>
 									</select></li>
 								<li style="grid-area: 10/1/12/2;"><label>同人展:</label><input type="text" name="market" /></li>
 								<li style="grid-area: 13/1/15/2;"><label>页数:</label><input type="number" name="pages" /></li>
