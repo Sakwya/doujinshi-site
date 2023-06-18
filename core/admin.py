@@ -4,8 +4,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from shutil import copyfile
 from core.db import get_db
+from core.scripts.read_info import read_dlsite, not_exist
 from core.urls import init_dic
 from core.fetch import get_username
+from core.operate import insert_doujinshi
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -18,7 +20,7 @@ def index():
     url_dic = init_dic()
     url_dic.update({
         "review_cover": url_for("static", filename="img/admin/review.jpg"),
-        "review": url_for("admin.review"),
+        "batch_import_cover": url_for('static', filename="img/admin/import.jpg"),
     })
     return render_template('admin.html', **url_dic)
 
@@ -68,38 +70,12 @@ def review_doujinshi(review_id):
 
     db = get_db()
     if request.method == 'POST':
-        sql = "INSERT INTO doujinshi (author_id,type_id,uploader_id,doujinshi_name,doujinshi_cover,market,pages" \
-              ") VALUES (?,?,?,?,?,?,?)"
-        author_name = request.form['author_name']
-        if len(author_name) != 0:
-            author_id = db.execute(
-                "SELECT author_id FROM author "
-                "WHERE author_name =?",
-                (author_name,)
-            ).fetchone()
-            if author_id is None:
-                db.execute("INSERT INTO author(author_name) VALUES (?)", (author_name,))
-                db.commit()
-                author_id = db.execute(
-                    "SELECT author_id FROM author "
-                    "WHERE author_name =?",
-                    (author_name,)
-                ).fetchone()
-            sql = sql.replace('?', str(author_id[0]), 1)
-        else:
-            sql = sql.replace('author_id,', '').replace(',?', '', 1)
-
         type_id = request.form['type_id']
-        sql = sql.replace('?', type_id, 1)
-
         uploader_id = request.form['uploader_id']
-        sql = sql.replace('?', str(uploader_id), 1)
-
         doujinshi_name = request.form['doujinshi_name']
-        sql = sql.replace('?', '"' + doujinshi_name + '"', 1)
 
+        doujinshi_cover = None
         cover_type = request.form['cover_type']
-
         if cover_type == "0":
             review_id = request.form['review_id']
             doujinshi_cover = db.execute(
@@ -107,56 +83,54 @@ def review_doujinshi(review_id):
                 "WHERE review_id = ?",
                 (review_id,)
             ).fetchone()[0]
-            if doujinshi_cover is None:
-                sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
-            else:
+            if doujinshi_cover is not None:
                 old_path = os.getcwd() + '\\core\\static\\review\\cover\\' + doujinshi_cover
                 doujinshi_cover = doujinshi_name + '.' + doujinshi_cover.split('.')[-1]
                 new_path = os.getcwd() + '\\core\\static\\img\\cover\\' + doujinshi_cover
                 copyfile(old_path, new_path)
-                sql = sql.replace('?', '"' + doujinshi_cover + '"', 1)
-
         if cover_type == "1":
-            sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
+            pass
         if cover_type == "2":
             cover = request.files['doujinshi_cover']
             if len(cover.filename) != 0:
                 doujinshi_cover = doujinshi_name + '.' + cover.filename.split('.')[-1]
                 cover.save('core/static/review/cover/' + doujinshi_cover)
-                sql = sql.replace('?', '"' + doujinshi_cover + '"', 1)
-            else:
-                sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
 
-        print(sql)
+        author_name = request.form['author_name']
+        if len(author_name) == 0:
+            author_name = None
+
         market = request.form['market']
-        if len(market) != 0:
-            market = '"' + market + '"'
-            sql = sql.replace('?', market, 1)
-        else:
-            sql = sql.replace(',market', '').replace(',?', '', 1)
+        if len(market) == 0:
+            market = None
 
         pages = request.form['pages']
-        if len(pages) != 0:
-            sql = sql.replace('?', pages, 1)
-        else:
-            sql = sql.replace(',pages', '').replace(',?', '', 1)
+        if len(pages) == 0:
+            pages = None
 
-        print(sql)
-        try:
-            db.execute(sql)
-            db.execute(
-                "UPDATE unconfirmed "
-                "SET condition = 1 "
-                "WHERE review_id = ?",
-                (review_id,)
-            )
-            db.commit()
+        adult = request.form['class']
+        if len(adult) == 0:
+            adult = None
+
+        response = insert_doujinshi({
+            'type_id': type_id,
+            'doujinshi_name': doujinshi_name,
+            'author_name': author_name,
+            'pages': pages,
+            'class': adult,
+            'doujinshi_cover': doujinshi_cover,
+            'uploader_id': uploader_id,
+        })
+        if response == 0:
             flash("提交成功")
             return redirect(url_for('admin.review'))
-        except ValueError:
-            flash("发生错误")
+        elif response == -1:
+            flash("传值错误")
             return redirect(url_for('admin.review', review_id=review_id))
-
+        elif response == -2:
+            flash("提交失败")
+            return redirect(url_for('admin.review', review_id=review_id))
+        return Exception
     unconfirmed_info = db.execute(
         "SELECT * FROM unconfirmed "
         "WHERE review_id = ?",
@@ -165,8 +139,8 @@ def review_doujinshi(review_id):
     if unconfirmed_info.__len__() == 0:
         flash("无效的审核号")
         return redirect(url_for('admin.review'))
-    author_name, type_id, uploader_id, doujinshi_name, doujinshi_cover, market, pages, condition = unconfirmed_info[0][
-                                                                                                   1:]
+    author_name, type_id, uploader_id, doujinshi_name, doujinshi_cover, market, pages, adult, condition = \
+        unconfirmed_info[0][1:]
 
     if doujinshi_cover is None:
         doujinshi_cover = url_for('static', filename="review/no_cover.png")
@@ -224,3 +198,60 @@ def ban():
             flash("发生错误")
             return redirect(url_for("admin.review", review_id=review_id))
     return redirect(url_for("admin.review"))
+
+
+@bp.route('/batch_import', methods=('GET', 'POST'))
+def batch_import():
+    user_id = session.get('user_id')
+    if user_id != 0:
+        return redirect(url_for("user.route"))
+
+    if request.method == 'POST':
+        type_id = request.form['type_id']
+        site = request.form['site']
+        if site == 'dlsite':
+            dlsite = read_dlsite()
+            dlsite = not_exist(dlsite)
+            for info_dic in dlsite:
+                n_type_id = str(info_dic['type_id'])
+                if n_type_id == type_id:
+                    response = insert_doujinshi(info_dic)
+                    if response == -1:
+                        flash("传值错误")
+                        break
+                    elif response == -2:
+                        flash("提交失败")
+                        break
+
+    dlsite = read_dlsite()
+    info_list = []
+
+    dlsite_logo = url_for('static', filename="img/site/logo-dlsite.png")
+    # for
+    manga = []
+    illustration = []
+    novel = []
+
+    for info_dic in dlsite:
+        type_id = info_dic['type_id']
+        if type_id == 1:
+            manga.append(info_dic)
+        elif type_id == 2:
+            illustration.append(info_dic)
+        elif type_id == 3:
+            novel.append(info_dic)
+
+    manga = not_exist(manga)
+    illustration = not_exist(illustration)
+    novel = not_exist(novel)
+    info_list.append(['漫画', dlsite_logo, len(manga), 1, 'dlsite'])
+    info_list.append(['画册', dlsite_logo, len(illustration), 2, 'dlsite'])
+    info_list.append(['同人文', dlsite_logo, len(novel), 3, 'dlsite'])
+
+    url_dic = init_dic()
+    url_dic.update({
+        'dlsite': len(dlsite),
+        'new_num': len(manga) + len(illustration) + len(novel),
+        'info_list': info_list,
+    })
+    return render_template('batch_import.html', **url_dic)

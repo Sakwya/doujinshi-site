@@ -584,3 +584,74 @@ section>ul.list>div:hover>span:nth-of-type(5)>a{
 section>ul.list>div>span:nth-of-type(5):hover>a{
 	background-color: #a5f;
 }
+
+
+section>ul.list2 {
+	margin: 0rem;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+section>ul.list2>*{
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+section>ul.list2>div>label{
+	display: flex;
+	align-items: center;
+	height: 2rem;
+}
+section>ul.list2>div>label>span{
+	margin: 0 auto;
+	color: #fff;
+	font-weight: bold;
+	padding: 0.4rem 1rem;
+	height: 2rem;
+	box-sizing: border-box;
+	border-radius: 0.4rem;
+	background-color: #a5f;
+}
+section>ul.list2>div>span{
+	display: flex;
+	margin: 0;
+	align-items: center;
+	height: 2rem;
+}
+section>ul.list2>div>span>a{
+	margin: 0 auto;
+	color: #888;
+	font-weight: bold;
+}
+section>ul.list2>div>span:hover>a{
+	color: #555;
+}
+section>ul.list2>div>*:nth-of-type(1){
+	width: 8rem;
+}
+section>ul.list2>div>*:nth-of-type(2){
+	border-radius: 0.4rem;
+	width: 8rem;
+}
+section>ul.list2>div>*:nth-of-type(3){
+	width: 12rem;
+}
+section>ul.list2>div>*:nth-of-type(4){
+	width: 8rem;
+}
+section>ul.list2>div>span:nth-of-type(4)>a{
+	margin: 0 auto;
+	color: #fff;
+	font-weight: bold;
+	padding: 0.2rem 0.8rem;
+	border-radius: 0.4rem;
+	background-color: #888;
+	opacity: 0;
+	transition: background-color 0.4s;
+}
+section>ul.list2>div:hover>span:nth-of-type(4)>a{
+	opacity: 1;
+}
+section>ul.list2>div>span:nth-of-type(4):hover>a{
+	background-color: #a5f;
+}

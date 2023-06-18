@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>批量导入-管理员工具</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
+	</head>
+	<body>
+		<div id="root">
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title">DouJinShi</span></div>
+						</div>
+						<div class="search">
+
+						</div>
+						<div class="right">
+
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
+							</div>
+						</div>
+						<div><span class="title">DouJinShi</span></div>
+					</div>
+					<ul>
+						<li><span>首页</span></li>
+						<li><a href="{{manga}}">漫画</a></li>
+						<li><a href="{{illustration}}">画集</a></li>
+						<li><a href="{{novel}}">小说</a></li>
+						<li><a href="{{magazine}}">杂志</a></li>
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						<li><a class="active">批量导入</a></li>
+						{% endif %}
+					</ul>
+					<script type="text/javascript">
+						const aside = document.querySelector("aside")
+						const mask = document.querySelector(".mask")
+						const discover = () => {
+							mask.style.display = "none";
+						}
+						const changecolor = () => {
+							mask.style.opacity = "0.2";
+						}
+						const asideon = () => {
+							aside.style.left = "0rem";
+							mask.style.display = "block";
+							setTimeout(changecolor, 0)
+						}
+						const asideoff = () => {
+							aside.style.left = "-15rem";
+							mask.style.opacity = "0";
+							setTimeout(discover, 600)
+						}
+						mask.addEventListener("click", () => {
+							asideoff()
+						})
+					</script>
+				</aside>
+				<div>
+					<section id="info">
+						<div><span>批量导入</span></div>
+						<ul>
+							<li><label>dlsite数据:</label><span>{{dlsite}}条</span></li>
+							<li><label>fanza数据:</label><span>{{fanza}}</span></li>
+							<li><label>未导入数据:</label><span>{{new_num}}条</span></li>
+						</ul>
+					</section>
+				</div>
+				<div>
+					<section>
+						<ul class="list2">
+							<div>
+								<label><span>类型</span></label><label><span>来源</span></label><label><span>同人志数量</span></label>
+							</div>
+							{% if new_num == 0 %}
+							<div style="font-weight: bold;color: #555;margin: 2rem 0;">暂无新数据</div>
+							{% else %}
+							{% for info in info_list %}
+							<div>
+								<span><a>{{info[0]}}</a></span>
+								<span><a
+										style=" width: 100%;height:60%;background: url('{{info[1]}}') no-repeat;background-size: contain;background-position: 50% 50%;"></a></span>
+								<span><a>{{info[2]}}</a></span>
+								<span><a onclick='submit({{info[3]}},"{{info[4]}}");'>处理</a></span>
+
+							</div>
+							{% endfor %}
+							<form method="POST" style="display: none;">
+								<input type="number" name="type_id" required />
+								<input type="text" name="site" required />
+							</form>
+							{% endif %}
+						</ul>
+						<script type="text/javascript">
+							const form = document.body.querySelector("form");
+							const t = document.body.querySelector("input");
+							const s = document.body.querySelectorAll("input")[1];
+							const submit = (type_id, site) => {
+								t.value = type_id;
+								s.value = site;
+								form.submit();
+							}
+						</script>
+					</section>
+				</div>
+			</article>
+		</div>
+	</body>
+</html>
