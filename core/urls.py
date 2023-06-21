@@ -17,6 +17,8 @@ def init_dic(title="未命名的页面"):
         'index': url_for('index'),
         'account': session.get('account'),
         'username': username,
+        'doujinshi': url_for('doujinshi.home'),
+        'search': url_for('doujinshi.search'),
         # 用户登录
         'login': url_for('user.login'),
         'signup': url_for('user.signup'),
@@ -24,10 +26,15 @@ def init_dic(title="未命名的页面"):
         'manga': url_for('manga'),
         'illustration': url_for('illustration'),
         'novel': url_for('novel'),
-        'magazine': url_for('magazine'),
+        # tag页面
+        'tag': url_for('tag.tags'),
+        # 同人志页面
+        'doujinshi_manga': url_for('doujinshi.manga'),
+        'doujinshi_illustration': url_for('doujinshi.illustration'),
+        'doujinshi_novel': url_for('doujinshi.novel'),
         # 用户功能
         'user': url_for('user.route'),
-        'doujinshi': url_for('doujinshi.home'),
+        'collection': url_for('user.collection'),
         'upload': url_for('upload.upload'),
         'logout': url_for('user.login') + "?logout=1",
         # 个人设置
@@ -38,5 +45,6 @@ def init_dic(title="未命名的页面"):
         'admin': url_for('admin.index'),
         'review': url_for('admin.review'),
         "batch_import": url_for("admin.batch_import"),
+        "batch_url": url_for("admin.batch_url"),
     }
     return url_dic

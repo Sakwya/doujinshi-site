@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>主页-Doujinshi</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
+	</head>
+	<body>
+		<div id="root">
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title" onclick="window.location='{{manga}}'">DouJinShi</span></div>
+						</div>
+						<div class="search">
+							<form id = "search" action="{{search}}" method="get" style="display: none;"></form>
+							<input type="search" form="search" name="key" placeholder="搜索……" required/>
+						</div>
+						<div class="right">
+				
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
+							</div>
+						</div>
+						<div><span class="title">DouJinShi</span></div>
+					</div>
+					<ul>
+						<li><span>首页</span></li>
+						{% if type_id == 1 %}
+						<li><a class="active">漫画</a></li>
+						{% else %}
+						<li><a href="{{manga}}">漫画</a></li>
+						{% endif %}
+						{% if type_id == 2 %}
+						<li><a class="active">画册</a></li>
+						{% else %}
+						<li><a href="{{illustraion}}">画册</a></li>
+						{% endif %}
+						{% if type_id == 3 %}
+						<li><a class="active">同人文</a></li>
+						{% else %}
+						<li><a href="{{novel}}">同人文</a></li>
+						{% endif %}
+						
+						<li><span>标签</span></li>
+						<li><a href="{{tag}}">标签列表</a></li>
+						
+						<li><span>同人志</span></li>
+						<li><a href="{{doujinshi_manga}}">漫画</a></li>
+						<li><a href="{{doujinshi_illustraion}}">画册</a></li>
+						<li><a href="{{doujinshi_novel}}">同人文</a></li>
+						
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{collection}}">收藏</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						<li><a href="{{batch_import}}">批量导入</a></li>
+						{% endif %}
+					</ul>
+					<script type="text/javascript">
+						const aside = document.querySelector("aside")
+						const mask = document.querySelector(".mask")
+						const discover = () => {
+							mask.style.display = "none";
+						}
+						const changecolor = () => {
+							mask.style.opacity = "0.2";
+						}
+						const asideon = () => {
+							aside.style.left = "0rem";
+							mask.style.display = "block";
+							setTimeout(changecolor, 0)
+						}
+						const asideoff = () => {
+							aside.style.left = "-15rem";
+							mask.style.opacity = "0";
+							setTimeout(discover, 600)
+						}
+						mask.addEventListener("click", () => {
+							asideoff()
+						})
+					</script>
+				</aside>
+				<div class="tags">
+					{% for tag in tag_list %}
+					<div><a href="{{tag[0]}}"><span>#{{tag[1]}}</span></a></div>
+					{% endfor %}
+					<script>
+						const color_list = ['#7ad', '#7da', '#a7d', '#ad7', '#d7a', '#da7']
+						const color = (ele) => {
+							let index = Math.floor(Math.random() * 6)
+							ele.style.backgroundColor = color_list[index]
+							ele.style.color = "#fff"
+							console.log(ele.style.backgroundColor)
+						}
+						const tag_list = document.querySelectorAll(".tags > div>a")
+						for (var i = 0; i < tag_list.length; i++) {
+							color(tag_list[i])
+						}
+					</script>
+				</div>
+				<div class="nav">
+					<nav>
+						{% if type_id == 1 %}
+						<a class="active"><span>漫画</span></a>
+						{% else %}
+						<a href="{{manga}}"><span>漫画</span></a>
+						{% endif %}
+						{% if type_id == 2 %}
+						<a class="active"><span>画册</span></a>
+						{% else %}
+						<a href="{{illustration}}"><span>画册</span></a>
+						{% endif %}
+						{% if type_id == 3 %}
+						<a class="active"><span>同人文</span></a>
+						{% else %}
+						<a href="{{novel}}"><span>同人文</span></a>
+						{% endif %}
+					</nav>
+					<div>
+						<div class="active"><span>一般向</span></div>
+						<div><span>特殊向</span></div>
+					</div>
+				</div>
+				
+				{% if type_id == 1 %}
+				<div>
+					<section>
+						<div><span>收藏的漫画</span><a href="{{collection}}">查看全部</a></div>
+						<ul class="inline">
+							{% if collection_list|length == 0 %}
+							<span>没有收藏的漫画</span>
+							{% else %}
+							{% for doujinshi in collection_list %}
+							<div>
+								<div class="p">
+								<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+								<div style="background-image: url({{doujinshi[2]}});"></div>
+							</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+				{% if type_id == 2 %}
+				<div>
+					<section>
+						<div><span>收藏的画册</span><a href="{{collection}}">查看全部</a></div>
+						<ul class="inline">
+							{% if collection_list|length == 0 %}
+							<span>没有收藏的画册</span>
+							{% else %}
+							{% for doujinshi in collection_list %}
+							<div>
+								<div class="p">
+								<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+								<div style="background-image: url({{doujinshi[2]}});"></div>
+							</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+				{% if type_id == 3 %}
+				<div>
+					<section>
+						<div><span>收藏的同人文</span><a href="{{collection}}">查看全部</a></div>
+						<ul class="inline">
+							{% if collection_list|length == 0 %}
+							<span>没有收藏的同人文</span>
+							{% else %}
+							{% for doujinshi in collection_list %}
+							<div>
+								<div class="p">
+								<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+								<div style="background-image: url({{doujinshi[2]}});"></div>
+							</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+				
+				{% if type_id == 1 %}
+				<div>
+					<section>
+						<div><span>随机推荐</span><a href="{{doujinshi_manga}}">查看全部漫画</a></div>
+						<ul>
+							{% if random_list|length == 0 %}
+							<span>没有推荐的漫画</span>
+							{% else %}
+							{% for doujinshi in random_list %}
+							<li>
+								<div class="p">
+									<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+									<div style="background-image: url({{doujinshi[2]}});"></div>
+									{% if doujinshi[3] == "漫画" %}
+									<span class="t1"><a href="{{doujinshi_manga}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "画册" %}
+									<span class="t2"><a href="{{doujinshi_illustration}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "同人文" %}
+									<span class="t3" ><a href="{{doujinshi_novel}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+								</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</li>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+				{% if type_id == 2 %}
+				<div>
+					<section>
+						<div><span>随机推荐</span><a href="{{doujinshi_illustration}}">查看全部画册</a></div>
+						<ul>
+							{% if random_list|length == 0 %}
+							<span>没有推荐的画册</span>
+							{% else %}
+							{% for doujinshi in random_list %}
+							<li>
+								<div class="p">
+									<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+									<div style="background-image: url({{doujinshi[2]}});"></div>
+									{% if doujinshi[3] == "漫画" %}
+									<span class="t1"><a href="{{doujinshi_manga}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "画册" %}
+									<span class="t2"><a href="{{doujinshi_illustration}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "同人文" %}
+									<span class="t3" ><a href="{{doujinshi_novel}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+								</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</li>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+				{% if type_id == 3 %}
+				<div>
+					<section>
+						<div><span>随机推荐</span><a href="{{doujinshi_novel}}">查看全部同人文</a></div>
+						<ul>
+							{% if random_list|length == 0 %}
+							<span>没有推荐的同人文</span>
+							{% else %}
+							{% for doujinshi in random_list %}
+							<li>
+								<div class="p">
+									<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+									<div style="background-image: url({{doujinshi[2]}});"></div>
+									{% if doujinshi[3] == "漫画" %}
+									<span class="t1"><a href="{{doujinshi_manga}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "画册" %}
+									<span class="t2"><a href="{{doujinshi_illustration}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "同人文" %}
+									<span class="t3" ><a href="{{doujinshi_novel}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+								</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</li>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+				{% endif %}
+
+				{% for random_list in random_tag_list %}
+				<div>
+					<section>
+						<div><span>#{{random_list[0][1]}}的推荐作品</span><a href="{{random_list[0][0]}}">查看全部</a></div>
+						<ul>
+							{% with doujinshi_list = random_list[1] %}
+							{% for doujinshi in doujinshi_list %}
+							<li>
+								<div class="p">
+									<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+									<div style="background-image: url({{doujinshi[2]}});"></div>
+									{% if doujinshi[3] == "漫画" %}
+									<span class="t1"><a href="{{doujinshi_manga}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "画册" %}
+									<span class="t2"><a href="{{doujinshi_illustration}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "同人文" %}
+									<span class="t3" ><a href="{{doujinshi_novel}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+								</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</li>
+							{% endfor %}
+							{% endwith %}
+						</ul>
+					</section>
+				</div>
+				{% endfor %}
+			</article>
+		</div>
+	</body>
+</html>

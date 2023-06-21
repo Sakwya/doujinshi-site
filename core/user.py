@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from core.db import get_db
 from core.urls import init_dic
-from core.fetch import get_collection, get_by_uploader, get_username
+from core.fetch import get_collection, get_by_uploader, get_username, getAll_collection
 import random
 
 bp = Blueprint('user', __name__, url_prefix='/user')
@@ -40,6 +40,7 @@ def index(user_id):
 
     if str(session.get('user_id')) != user_id:
         url_dic.update({
+            'uploader': url_for('doujinshi.uploader', uploader_id=user_id),
             'username': user[2],
             'email': user[4],
             'head_img': head_img,
@@ -54,6 +55,7 @@ def index(user_id):
         (user_id,)
     ).fetchone()[0]
     url_dic.update({
+        'uploader': url_for('doujinshi.uploader', uploader_id=user_id),
         'email': user[4],
         'head_img': head_img,
         'artwork_num': artwork_num,
@@ -143,21 +145,22 @@ def configure():
     if request.method == 'POST':
         db = get_db()
         user_name = request.form['username']
+        email = request.form['email']
         try:
             db.execute(
                 "UPDATE user "
-                "SET user_name = ? "
+                "SET user_name = ?,email = ? "
                 "WHERE user_id = ? ",
-                (user_name, user_id),
+                (user_name, email, user_id),
             )
             db.commit()
         except db.IntegrityError:
-            flash("昵称更改失败,请重新确认")
+            flash("更改失败,请重新确认")
             return redirect(url_for('user.configure'))
 
         enable_img = request.form['enable_img']
         if enable_img == "f":
-            flash("昵称更改成功~☆")
+            flash("更改成功~☆")
             return redirect(url_for('user.route'))
 
         head_img = request.files['head_img']
@@ -195,8 +198,17 @@ def configure():
         else:
             flash('修改成功~☆')
             return redirect(url_for('user.route'))
-
-    return render_template('configure.html', **init_dic())
+    url_dic = init_dic()
+    db = get_db()
+    email = db.execute(
+        "SELECT email FROM user "
+        "WHERE user_id =?",
+        (user_id,)
+    ).fetchone()[0]
+    url_dic.update({
+        'email': email,
+    })
+    return render_template('configure.html', **url_dic)
 
 
 @bp.route('/reset', methods=('GET', 'POST'))
@@ -207,3 +219,28 @@ def reset():
     if request.method == 'POST':
         return render_template('reset.html', **init_dic())
     return render_template('reset.html', **init_dic())
+
+
+@bp.route('/collection')
+@bp.route('/collection/<type_id>')
+def collection(type_id=0):
+    user_id = session.get('user_id')
+    if user_id is None:
+        flash("请先进行登录")
+        return redirect(url_for('user.login'))
+    try:
+        type_id = int(type_id)
+        if type_id not in [0, 1, 2, 3]:
+            flash('错误的页面')
+            return redirect(url_for('user.index'))
+    except ValueError:
+        flash('错误的页面')
+        return redirect(url_for('user.index'))
+    username = get_username(user_id)
+    url_dic = init_dic(username + "的收藏")
+    url_dic.update({
+        'type_id': type_id,
+        'username': username,
+        'doujinshi_list': getAll_collection(user_id, type_id)
+    })
+    return render_template('collection.html', **url_dic)

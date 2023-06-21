@@ -42,10 +42,13 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
+            'type_id': 1,
             'collection_list': fetch.get_collection(6, session.get('user_id'), 1),
-            'random_list': fetch.get_random(1)
+            'random_list': fetch.get_random(1),
+            'tag_list': fetch.get_random_tag(),
+            'random_tag_list': fetch.get_random_by_tag(),
         })
-        return render_template('manga.html', **url_dic)
+        return render_template('home.html', **url_dic)
 
     @app.route('/illustration')
     def illustration():
@@ -54,10 +57,13 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
+            'type_id': 2,
             'collection_list': fetch.get_collection(6, session.get('user_id'), 2),
-            'random_list': fetch.get_random(2)
+            'random_list': fetch.get_random(2),
+            'tag_list': fetch.get_random_tag(),
+            'random_tag_list': fetch.get_random_by_tag(),
         })
-        return render_template('illustration.html', **url_dic)
+        return render_template('home.html', **url_dic)
 
     @app.route('/novel')
     def novel():
@@ -66,32 +72,26 @@ def create_app(test_config=None):
             return redirect(url_for('user.login'))
         url_dic = init_dic()
         url_dic.update({
+            'type_id': 3,
             'collection_list': fetch.get_collection(6, session.get('user_id'), 3),
-            'random_list': fetch.get_random(3)
+            'random_list': fetch.get_random(3),
+            'tag_list': fetch.get_random_tag(),
+            'random_tag_list': fetch.get_random_by_tag(),
         })
-        return render_template('novel.html', **url_dic)
+        return render_template('home.html', **url_dic)
 
-    @app.route('/magazine')
-    def magazine():
-        user_id = session.get("user_id")
-        if user_id is None:
-            return redirect(url_for('user.login'))
-        url_dic = init_dic()
-        url_dic.update({
-            'collection_list': fetch.get_collection(6, session.get('user_id'), 4),
-            'random_list': fetch.get_random(4)
-        })
-        return render_template('magazine.html', **url_dic)
 
     # 数据库
     from core import db
     db.init_app(app)
     # 蓝图
-    from . import doujinshi, user, admin, upload
+    from . import doujinshi, user, admin, upload, author, tag
     app.register_blueprint(doujinshi.bp)
     app.register_blueprint(user.bp)
     app.register_blueprint(admin.bp)
     app.register_blueprint(upload.bp)
+    app.register_blueprint(author.bp)
+    app.register_blueprint(tag.bp)
 
     # 6.返回框架实例：一个可调用框架对象
     return app

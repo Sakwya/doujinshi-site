@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>{{title}}</title>
+		<script type="text/javascript">
+			{% for message in get_flashed_messages() %}
+			window.alert("{{message}}") 
+			{% endfor %}
+		</script>
+		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/scroll.css">
+	</head>
+	<body>
+		<div id="root">
+			<article>
+				<header>
+					<nav>
+						<div class="left">
+							<div class="button" onmouseenter="hoverin()" onmouseleave="hoverout()" onclick="asideon()">
+								<div class="three">
+									<div class="first"></div>
+									<div class="second"></div>
+									<div class="third"></div>
+								</div>
+								<script type="text/javascript">
+									var revolve = false;
+									var rowing = false;
+									const up = document.querySelector("div.first");
+									const down = document.querySelector("div.third");
+									const mid = document.querySelector("div.second");
+									var deg = 0;
+									var row;
+									const hoverin = () => {
+										revolve = false
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 15)
+										}
+									}
+									const hoverout = () => {
+										revolve = true
+										if (rowing == false) {
+											row = setInterval(function() {
+												rotate()
+											}, 20)
+										}
+									}
+									const increase = () => {
+										if (revolve == false) {
+											deg += 5;
+										} else {
+											deg -= 5;
+										}
+									}
+									const rotate = () => {
+										rowing = true
+										if (deg <= 0 && revolve == true) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (deg >= 50 && revolve == false) {
+											rowing = false
+											clearInterval(row)
+										}
+										if (rowing == true) {
+											increase()
+											up.style = "transform: rotate(" + deg + "deg)";
+											mid.style = "width:" + (1 - deg / 50) + "em";
+											down.style = "transform: rotate(-" + deg + "deg)";
+										}
+										console.log(deg)
+									}
+								</script>
+							</div>
+							<div><span class="title" onclick="window.location='{{manga}}'">DouJinShi</span></div>
+						</div>
+						<div class="search">
+							<form id = "search" action="{{search}}" method="get" style="display: none;"></form>
+							<input type="search" form="search" name="key" placeholder="搜索……" required/>
+						</div>
+						<div class="right">
+				
+						</div>
+					</nav>
+				</header>
+				<span class="mask"></span>
+				<aside>
+					<div class="left">
+						<div class="button" onclick="asideoff()">
+							<div class="three">
+								<div class="first"></div>
+								<div class="second"></div>
+								<div class="third"></div>
+							</div>
+						</div>
+						<div><span class="title">DouJinShi</span></div>
+					</div>
+					<ul>
+						<li><span>首页</span></li>
+						<li><a href="{{manga}}">漫画</a></li>
+						<li><a href="{{illustration}}">画集</a></li>
+						<li><a href="{{novel}}">小说</a></li>
+						
+						<li><span>标签</span></li>
+						<li><a href="{{tag}}">标签列表</a></li>
+						
+						<li><span>同人志</span></li>
+						<li><a href="{{doujinshi_manga}}">漫画</a></li>
+						<li><a href="{{doujinshi_illustraion}}">画册</a></li>
+						<li><a href="{{doujinshi_novel}}">同人文</a></li>
+						
+						<li><span>用户</span></li>
+						<li><a href="{{user}}">主页</a></li>
+						<li><a href="{{collection}}">收藏</a></li>
+						<li><a href="{{upload}}">上传</a></li>
+						<li><a href="{{logout}}">退出登录</a></li>
+						
+						<li><span>个人设置</span></li>
+						<li><a href="{{configure}}">编辑个人资料</a></li>
+						<li><a href="{{reset}}">变更密码</a></li>
+						
+						{% if dev == True %}
+						<li><span>管理员</span></li>
+						<li><a href="{{admin}}">管理员界面</a></li>
+						<li><a href="{{review}}">审核</a></li>
+						<li><a href="{{batch_import}}">批量导入</a></li>
+						{% endif %}
+					</ul>
+					<script type="text/javascript">
+						const aside = document.querySelector("aside")
+						const mask = document.querySelector(".mask")
+						const discover = () => {
+							mask.style.display = "none";
+						}
+						const changecolor = () => {
+							mask.style.opacity = "0.2";
+						}
+						const asideon = () => {
+							aside.style.left = "0rem";
+							mask.style.display = "block";
+							setTimeout(changecolor, 0)
+						}
+						const asideoff = () => {
+							aside.style.left = "-15rem";
+							mask.style.opacity = "0";
+							setTimeout(discover, 600)
+						}
+						mask.addEventListener("click", () => {
+							asideoff()
+						})
+					</script>
+				</aside>
+				<div>
+					<section>
+						<div><span>{{uploader_name}}上传的作品</span><a href="{{uploader_page}}">主页</a></div>
+						<ul>
+							{% if doujinshi_list|length == 0 %}
+							<span>没有作品</span>
+							{% else %}
+							{% for doujinshi in doujinshi_list %}
+							<li>
+								<div class="p">
+									<div class="mask"><a href="{{doujinshi[0]}}"></a></div>
+									<div style="background-image: url({{doujinshi[2]}});"></div>
+									{% if doujinshi[3] == "漫画" %}
+									<span class="t1"><a href="{{doujinshi_manga}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "画册" %}
+									<span class="t2"><a href="{{doujinshi_illustration}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+									{% if doujinshi[3] == "同人文" %}
+									<span class="t3" ><a href="{{doujinshi_novel}}">{{doujinshi[3]}}</a></span>
+									{% endif %}
+								</div>
+								<span><a href="{{doujinshi[0]}}">{{doujinshi[1]}}</a></span>
+							</li>
+							{% endfor %}
+							{% endif %}
+						</ul>
+					</section>
+				</div>
+			</article>
+		</div>
+	</body>
+</html>

@@ -8,6 +8,11 @@
 			window.alert("{{message}}") 
 			{% endfor %}
 		</script>
+		<style>
+			#root{
+				background-image: url(/static/background.jpg) !important;
+			}
+		</style>
 		<link rel="shortcut icon" href="/static/shortcut.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/submit.css" />
@@ -21,8 +26,8 @@
 						<ul>
 							<li></li>
 							<li><label>昵称:</label><input type="text" name="username" data-valid="isNonEmpty"
-									placeholder="无特殊字符[2-20]" pattern="[^\n,$*%.? ]{2,20}" /></li>
-							<li><label>邮箱:</label><input type="email" name="email" placeholder="暂时无法修改"/></li>
+									placeholder="无特殊字符[2-20]" pattern="[^\n,$*%.? ]{2,20}" required/></li>
+							<li><label>邮箱:</label><input type="email" name="email" required/></li>
 							<li><input type="text" name="enable_img" data-valid="isNonEmpty" pattern="[tf]"
 									style="display: none;" />
 								<hr />
@@ -39,7 +44,6 @@
 								<hr />
 							</li>
 							<li><input type="submit" value="提交" /></li>
-							<li></li>
 							<script type="text/javascript">
 								const upload = () => {
 									return document.getElementById("file-input").click();
@@ -53,6 +57,8 @@
 								});
 								const username = document.getElementsByTagName("input")[0];
 								username.value = "{{username}}";
+								const email = document.getElementsByTagName("input")[1];
+								email.value = "{{email}}";
 								const enable_img = document.getElementsByTagName("input")[2];
 								enable_img.value = "f";
 								const click_span = document.getElementById("click-span");

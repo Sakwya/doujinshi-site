@@ -1,11 +1,100 @@
 from core.db import get_db
 
 
-def insert_doujinshi(info_dic):
-    sql = 'INSERT INTO doujinshi (type_id,uploader_id,doujinshi_name,author_id,doujinshi_cover,market,pages,class' \
-          ') VALUES (?,?,"?",?,?,?,?,?)'
+def create_doujinshi_url(doujinshi_id, platform_id, url):
     db = get_db()
-    print(info_dic)
+    if db.execute(
+            "SELECT * FROM doujinshi_url "
+            "WHERE doujinshi_id = ? and platform_id = ? "
+            "LIMIT 1",
+            (doujinshi_id, platform_id)
+    ).fetchone() is None:
+        db.execute(
+            "INSERT INTO doujinshi_url (doujinshi_id,platform_id,doujinshi_url) "
+            "VALUES(?,?,?)",
+            (doujinshi_id, platform_id, url)
+        )
+        db.commit()
+
+
+def get_doujinshi_id(doujinshi_name):
+    db = get_db()
+    doujinshi_id = db.execute(
+        "SELECT doujinshi_id FROM doujinshi "
+        "WHERE doujinshi_name = ? "
+        "LIMIT 1",
+        (doujinshi_name,)
+    ).fetchone()
+    if doujinshi_id is None:
+        return -1
+    else:
+        return doujinshi_id[0]
+
+
+def get_author_id(author_name):
+    db = get_db()
+    author_id = db.execute(
+        "SELECT author_id FROM author "
+        "WHERE author_name = ? "
+        "LIMIT 1",
+        (author_name,)
+    ).fetchone()
+    if author_id is None:
+        return -1
+    else:
+        return author_id[0]
+
+
+def get_tag_id(tag_name):
+    db = get_db()
+    tag_id = db.execute(
+        "SELECT tag_id FROM tag "
+        "WHERE tag_name =? "
+        "LIMIT 1",
+        (tag_name,)
+    ).fetchone()
+    if tag_id is None:
+        db.execute(
+            "INSERT INTO tag (tag_name) "
+            "VALUES(?)",
+            (tag_name,)
+        )
+        db.commit()
+        return db.execute(
+            "SELECT tag_id FROM tag "
+            "WHERE tag_name =? "
+            "LIMIT 1",
+            (tag_name,)
+        ).fetchone()[0]
+    return tag_id[0]
+
+
+def add_tag(doujinshi_id, tag_name):
+    db = get_db()
+    tag_id = get_tag_id(tag_name)
+    result = db.execute(
+        "SELECT * FROM doujinshi_tag "
+        "WHERE doujinshi_id = ? AND tag_id = ? "
+        "LIMIT 1",
+        (doujinshi_id, tag_id)
+    ).fetchone()
+    if result is not None:
+        return -1
+    else:
+        db.execute(
+            "INSERT INTO doujinshi_tag (doujinshi_id,tag_id) "
+            "VAlUES(?,?)",
+            (doujinshi_id, tag_id)
+        )
+        db.commit()
+        return 0
+
+
+def insert_doujinshi(info_dic):
+    sql = 'INSERT INTO doujinshi (type_id,uploader_id,doujinshi_name,author_id,doujinshi_cover,market,pages,' \
+          'class) VALUES (\\replace\\,\\replace\\,"\\replace\\",\\replace\\,\\replace\\,' \
+          '\\replace\\,\\replace\\,\\replace\\)'
+    db = get_db()
 
     if 'type_id' in info_dic and 'uploader_id' in info_dic and 'doujinshi_name' in info_dic:
         type_id = info_dic['type_id']
@@ -14,67 +103,81 @@ def insert_doujinshi(info_dic):
     else:
         return -1
 
-    sql = sql.replace('?', type_id, 1)
-    sql = sql.replace('?', str(uploader_id), 1)
-    sql = sql.replace('?', doujinshi_name, 1)
+    sql = sql.replace('\\replace\\', str(type_id), 1)
+    sql = sql.replace('\\replace\\', str(uploader_id), 1)
+    sql = sql.replace('\\replace\\', doujinshi_name, 1)
 
     if 'author_name' in info_dic:
         author_name = info_dic['author_name']
         if author_name is None:
-            sql = sql.replace('author_id,', '').replace(',?', '', 1)
+            sql = sql.replace('author_id,', '').replace(',\\replace\\', '', 1)
         else:
-            author_id = db.execute(
-                "SELECT author_id FROM author "
-                "WHERE author_name =?",
-                (author_name,)
-            ).fetchone()
-            if author_id is None:
+            author_id = get_author_id(author_name)
+
+            if author_id is -1:
                 db.execute("INSERT INTO author(author_name) VALUES (?)", (author_name,))
                 db.commit()
                 author_id = db.execute(
                     "SELECT author_id FROM author "
                     "WHERE author_name =?",
                     (author_name,)
-                ).fetchone()
-            sql = sql.replace('?', str(author_id[0]), 1)
+                ).fetchone()[0]
+
+            if 'author_url' in info_dic:
+                author_url = info_dic['author_url']
+                platform_id = info_dic['platform_id']
+                if db.execute(
+                        "SELECT * FROM author_url "
+                        "WHERE author_id = ? and platform_id = ? "
+                        "LIMIT 1",
+                        (author_id, platform_id)
+                ).fetchone() is None:
+                    db.execute(
+                        "INSERT INTO author_url (author_id,platform_id,author_url) "
+                        "VALUES(?,?,?)",
+                        (str(author_id), str(platform_id), author_url)
+                    )
+                    db.commit()
+
+            sql = sql.replace('\\replace\\', str(author_id), 1)
     else:
-        sql = sql.replace('author_id,', '').replace(',?', '', 1)
+        sql = sql.replace('author_id,', '').replace(',\\replace\\', '', 1)
 
     if 'doujinshi_cover' in info_dic:
         doujinshi_cover = info_dic['doujinshi_cover']
         if doujinshi_cover is None:
-            sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
+            sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', '"' + doujinshi_cover + '"', 1)
+            sql = sql.replace('\\replace\\', '"' + doujinshi_cover + '"', 1)
     else:
-        sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
+        sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
 
     if 'market' in info_dic:
         market = info_dic['market']
         if market is None:
-            sql = sql.replace(',market', '').replace(',?', '', 1)
+            sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', market, 1)
+            sql = sql.replace('\\replace\\', '"' + market + '"', 1)
     else:
-        sql = sql.replace(',market', '').replace(',?', '', 1)
+        sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
 
     if 'pages' in info_dic:
         pages = info_dic['pages']
         if pages is None:
-            sql = sql.replace(',pages', '').replace(',?', '', 1)
+            sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', pages, 1)
+            sql = sql.replace('\\replace\\', '"' + pages + '"', 1)
     else:
-        sql = sql.replace(',pages', '').replace(',?', '', 1)
+        sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
 
     if 'class' in info_dic:
         adult = info_dic['class']
         if adult is None:
-            sql = sql.replace(',class', '').replace(',?', '', 1)
+            sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', adult, 1)
+            sql = sql.replace('\\replace\\', str(adult), 1)
     else:
-        sql = sql.replace(',class', '').replace(',?', '', 1)
+        sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
 
     print(sql)
     try:
@@ -82,12 +185,20 @@ def insert_doujinshi(info_dic):
         db.commit()
     except ValueError:
         return -2
+    if 'tag_list' in info_dic:
+        doujinshi_id = get_doujinshi_id(doujinshi_name)
+        tag_list = info_dic['tag_list']
+        if tag_list is None:
+            return 0
+        for tag in tag_list:
+            add_tag(doujinshi_id,tag)
     return 0
 
 
 def insert_unconfirmed(info_dic):
-    sql = 'INSERT INTO unconfirmed (type_id,uploader_id,doujinshi_name,author_name,doujinshi_cover,market,pages,class' \
-          ') VALUES (?,?,"?",?,?,?,?,?)'
+    sql = 'INSERT INTO unconfirmed (type_id,uploader_id,doujinshi_name,author_name,doujinshi_cover,market,pages,' \
+          'tag_list,class) VALUES (\\replace\\,\\replace\\,"\\replace\\",\\replace\\,\\replace\\,\\replace\\,' \
+          '\\replace\\,\\replace\\,\\replace\\)'
     db = get_db()
 
     if 'type_id' in info_dic and 'uploader_id' in info_dic and 'doujinshi_name' in info_dic:
@@ -97,54 +208,63 @@ def insert_unconfirmed(info_dic):
     else:
         return -1
 
-    sql = sql.replace('?', type_id, 1)
-    sql = sql.replace('?', str(uploader_id), 1)
-    sql = sql.replace('?', doujinshi_name, 1)
+    sql = sql.replace('\\replace\\', str(type_id), 1)
+    sql = sql.replace('\\replace\\', str(uploader_id), 1)
+    sql = sql.replace('\\replace\\', doujinshi_name, 1)
 
     if 'author_name' in info_dic:
         author_name = info_dic['author_name']
         if author_name is None:
-            sql = sql.replace('author_name,', '').replace(',?', '', 1)
+            sql = sql.replace('author_name,', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', '"'+author_name+'"', 1)
+            sql = sql.replace('\\replace\\', '"' + author_name + '"', 1)
     else:
-        sql = sql.replace('author_name,', '').replace(',?', '', 1)
+        sql = sql.replace('author_name,', '').replace(',\\replace\\', '', 1)
 
     if 'doujinshi_cover' in info_dic:
         doujinshi_cover = info_dic['doujinshi_cover']
         if doujinshi_cover is None:
-            sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
+            sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', '"' + doujinshi_cover + '"', 1)
+            sql = sql.replace('\\replace\\', '"' + doujinshi_cover + '"', 1)
     else:
-        sql = sql.replace(',doujinshi_cover', '').replace(',?', '', 1)
+        sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
 
     if 'market' in info_dic:
         market = info_dic['market']
         if market is None:
-            sql = sql.replace(',market', '').replace(',?', '', 1)
+            sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', market, 1)
+            sql = sql.replace('\\replace\\', '"' + market + '"', 1)
     else:
-        sql = sql.replace(',market', '').replace(',?', '', 1)
+        sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
 
     if 'pages' in info_dic:
         pages = info_dic['pages']
         if pages is None:
-            sql = sql.replace(',pages', '').replace(',?', '', 1)
+            sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', pages, 1)
+            sql = sql.replace('\\replace\\', '"' + pages + '"', 1)
     else:
-        sql = sql.replace(',pages', '').replace(',?', '', 1)
+        sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
+
+    if 'tag_list' in info_dic:
+        tag_list = info_dic['tag_list']
+        if tag_list is None:
+            sql = sql.replace(',tag_list', '').replace(',\\replace\\', '', 1)
+        else:
+            sql = sql.replace('\\replace\\', '"' + tag_list + '"', 1)
+    else:
+        sql = sql.replace(',tag_list', '').replace(',\\replace\\', '', 1)
 
     if 'class' in info_dic:
-        adult = info_dic['class']
-        if adult is None:
-            sql = sql.replace(',class', '').replace(',?', '', 1)
+        class_ = info_dic['class']
+        if class_ is None:
+            sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('?', adult, 1)
+            sql = sql.replace('\\replace\\', '"' + class_ + '"', 1)
     else:
-        sql = sql.replace(',class', '').replace(',?', '', 1)
+        sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
 
     print(sql)
     try:

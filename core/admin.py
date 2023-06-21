@@ -1,13 +1,13 @@
-import functools
-from flask import Blueprint, request, render_template, flash, session, redirect, url_for, g
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from shutil import copyfile
+
+from flask import Blueprint, request, render_template, flash, session, redirect, url_for
+
 from core.db import get_db
-from core.scripts.read_info import read_dlsite, not_exist
-from core.urls import init_dic
 from core.fetch import get_username
-from core.operate import insert_doujinshi
+from core.operate import insert_doujinshi, get_doujinshi_id, create_doujinshi_url
+from core.scripts.read_info import read_dlsite, not_exist, read_melonbooks
+from core.urls import init_dic
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -21,6 +21,7 @@ def index():
     url_dic.update({
         "review_cover": url_for("static", filename="img/admin/review.jpg"),
         "batch_import_cover": url_for('static', filename="img/admin/import.jpg"),
+        "batch_url_cover": url_for('static', filename="img/admin/url.jpg"),
     })
     return render_template('admin.html', **url_dic)
 
@@ -77,7 +78,6 @@ def review_doujinshi(review_id):
         doujinshi_cover = None
         cover_type = request.form['cover_type']
         if cover_type == "0":
-            review_id = request.form['review_id']
             doujinshi_cover = db.execute(
                 "SELECT doujinshi_cover FROM unconfirmed "
                 "WHERE review_id = ?",
@@ -108,21 +108,37 @@ def review_doujinshi(review_id):
         if len(pages) == 0:
             pages = None
 
-        adult = request.form['class']
-        if len(adult) == 0:
-            adult = None
+        tag_list = request.form['tag_list']
+        if tag_list is None:
+            tag_list = []
+        else:
+            tag_list = tag_list.split('#')
+            tag_list.remove('')
 
+        class_ = request.form['class']
+        if len(class_) == 0:
+            class_ = None
+
+        print(tag_list)
         response = insert_doujinshi({
             'type_id': type_id,
             'doujinshi_name': doujinshi_name,
             'author_name': author_name,
+            'market': market,
             'pages': pages,
-            'class': adult,
+            'tag_list': tag_list,
+            'class': class_,
             'doujinshi_cover': doujinshi_cover,
             'uploader_id': uploader_id,
         })
         if response == 0:
             flash("提交成功")
+            db.execute(
+                "UPDATE unconfirmed SET condition = 1 "
+                "WHERE review_id = ?",
+                (review_id,)
+            )
+            db.commit()
             return redirect(url_for('admin.review'))
         elif response == -1:
             flash("传值错误")
@@ -135,12 +151,12 @@ def review_doujinshi(review_id):
         "SELECT * FROM unconfirmed "
         "WHERE review_id = ?",
         (review_id,)
-    ).fetchall()
-    if unconfirmed_info.__len__() == 0:
+    ).fetchone()
+    if unconfirmed_info is None:
         flash("无效的审核号")
         return redirect(url_for('admin.review'))
-    author_name, type_id, uploader_id, doujinshi_name, doujinshi_cover, market, pages, adult, condition = \
-        unconfirmed_info[0][1:]
+    author_name, type_id, uploader_id, doujinshi_name, doujinshi_cover, market, pages, tag_list, class_, condition = \
+        unconfirmed_info[1:]
 
     if doujinshi_cover is None:
         doujinshi_cover = url_for('static', filename="review/no_cover.png")
@@ -151,6 +167,11 @@ def review_doujinshi(review_id):
         market = ""
     if pages is None:
         pages = ""
+    if tag_list is None:
+        tag_list = []
+    else:
+        tag_list = tag_list.split('#')
+        tag_list.remove('')
 
     results = db.execute(
         "SELECT author_name FROM author",
@@ -169,6 +190,7 @@ def review_doujinshi(review_id):
         'uploader_id': uploader_id,
         'doujinshi_name': doujinshi_name,
         'doujinshi_cover': doujinshi_cover,
+        'tag_list': tag_list,
         'market': market,
         'pages': pages,
         'condition': condition,
@@ -209,7 +231,8 @@ def batch_import():
     if request.method == 'POST':
         type_id = request.form['type_id']
         site = request.form['site']
-        if site == 'dlsite':
+        print(site,type_id)
+        if site == '1':
             dlsite = read_dlsite()
             dlsite = not_exist(dlsite)
             for info_dic in dlsite:
@@ -222,11 +245,26 @@ def batch_import():
                     elif response == -2:
                         flash("提交失败")
                         break
-
+        if site == '2':
+            melonbooks = read_melonbooks()
+            melonbooks = not_exist(melonbooks)
+            for info_dic in melonbooks:
+                n_type_id = str(info_dic['type_id'])
+                if n_type_id == type_id:
+                    response = insert_doujinshi(info_dic)
+                    if response == -1:
+                        flash("传值错误")
+                        break
+                    elif response == -2:
+                        flash("提交失败")
+                        break
     dlsite = read_dlsite()
+    melonbooks = read_melonbooks()
+
     info_list = []
 
-    dlsite_logo = url_for('static', filename="img/site/logo-dlsite.png")
+    dlsite_logo = url_for('static', filename='img/site/logo-dlsite.png')
+    melonbooks_logo = url_for('static', filename='img/site/logo-melonbooks.png')
     # for
     manga = []
     illustration = []
@@ -244,14 +282,63 @@ def batch_import():
     manga = not_exist(manga)
     illustration = not_exist(illustration)
     novel = not_exist(novel)
-    info_list.append(['漫画', dlsite_logo, len(manga), 1, 'dlsite'])
-    info_list.append(['画册', dlsite_logo, len(illustration), 2, 'dlsite'])
-    info_list.append(['同人文', dlsite_logo, len(novel), 3, 'dlsite'])
+    new_num = len(manga) + len(illustration) + len(novel)
+
+    info_list.append(['漫画', dlsite_logo, len(manga), 1, 1])
+    info_list.append(['画册', dlsite_logo, len(illustration), 2, 1])
+    info_list.append(['同人文', dlsite_logo, len(novel), 3, 1])
+
+    manga = []
+    illustration = []
+    novel = []
+
+    for info_dic in melonbooks:
+        type_id = info_dic['type_id']
+        if type_id == 1:
+            manga.append(info_dic)
+        elif type_id == 2:
+            illustration.append(info_dic)
+        elif type_id == 3:
+            novel.append(info_dic)
+
+    manga = not_exist(manga)
+    illustration = not_exist(illustration)
+    novel = not_exist(novel)
+    new_num += len(manga) + len(illustration) + len(novel)
+
+    info_list.append(['漫画', melonbooks_logo, len(manga), 1, 2])
+    info_list.append(['画册', melonbooks_logo, len(illustration), 2, 2])
+    info_list.append(['同人文', melonbooks_logo, len(novel), 3, 2])
 
     url_dic = init_dic()
     url_dic.update({
         'dlsite': len(dlsite),
-        'new_num': len(manga) + len(illustration) + len(novel),
+        'melonbooks': len(melonbooks),
+        'new_num': new_num,
         'info_list': info_list,
     })
     return render_template('batch_import.html', **url_dic)
+
+
+@bp.route('/batch_url')
+def batch_url():
+    user_id = session.get('user_id')
+    if user_id != 0:
+        return redirect(url_for("user.route"))
+
+    dlsite = read_dlsite()
+    for info_dic in dlsite:
+        doujinshi_name = info_dic['doujinshi_name']
+        doujinshi_id = get_doujinshi_id(doujinshi_name)
+        doujinshi_url = info_dic['doujinshi_url']
+        platform_id = info_dic['platform_id']
+        create_doujinshi_url(doujinshi_id, platform_id, doujinshi_url)
+    melonbooks = read_melonbooks()
+    for info_dic in melonbooks:
+        doujinshi_name = info_dic['doujinshi_name']
+        doujinshi_id = get_doujinshi_id(doujinshi_name)
+        doujinshi_url = info_dic['doujinshi_url']
+        platform_id = info_dic['platform_id']
+        create_doujinshi_url(doujinshi_id, platform_id, doujinshi_url)
+    flash("处理完毕")
+    return redirect(url_for('admin.index'))

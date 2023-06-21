@@ -43,14 +43,20 @@ def upload():
         if len(adult) == 0:
             adult = None
 
+        tag_list = request.form['tag_list']
+        if len(tag_list) == 0:
+            tag_list = None
+
         response = insert_unconfirmed({
             'type_id': type_id,
             'doujinshi_name': doujinshi_name,
             'author_name': author_name,
+            'market': market,
             'pages': pages,
             'class': adult,
             'doujinshi_cover': doujinshi_cover,
             'uploader_id': uploader_id,
+            'tag_list': tag_list,
         })
         if response == 0:
             flash("提交成功！")
@@ -71,10 +77,21 @@ def upload():
         ()
     ).fetchall()
     author_list = []
+
     for result in results:
         author_list.append(result[0])
 
+    results = db.execute(
+        "SELECT tag_name FROM tag_in_order",
+        ()
+    ).fetchall()
+    tag_list = []
+
+    for result in results:
+        tag_list.append(result[0])
+
     url_dic.update({
         'authors': author_list,
+        'tags': tag_list
     })
     return render_template('upload.html', **url_dic)

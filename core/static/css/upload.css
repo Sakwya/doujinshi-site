@@ -1,11 +1,11 @@
-article>div>form{
-	width: 45rem !important;
+article>div>form {
 	padding: 1rem;
 	background-color: #fff;
 	border-top-right-radius: 11rem;
 	border-bottom-left-radius: 6rem;
 }
-fieldset{
+
+fieldset {
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
@@ -14,7 +14,8 @@ fieldset{
 	border-bottom-left-radius: 5rem;
 	padding: 2rem;
 }
-legend{
+
+legend {
 	font-weight: bold;
 	font-variant: small-caps;
 	padding: 0 1rem;
@@ -22,32 +23,110 @@ legend{
 	color: #a5f;
 }
 
-fieldset>ul.form{
+fieldset>ul.form {
 	width: 100%;
 	list-style: none;
 	display: grid;
-	grid-template-columns: 20rem 20rem;
-	grid-template-rows: 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem;/*24列*/
+	grid-template-columns: 20rem 14rem 26rem;
+	grid-template-rows: 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem 1rem;
+	/*23列*/
 	flex-direction: column;
 }
-fieldset>ul{
+
+fieldset>ul {
 	width: 100%;
 	list-style: none;
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
 }
-fieldset>ul>li{
+
+fieldset>ul>li {
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
 }
-label{
+
+#tag_list {
+	position: static;
+	display: block;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+#tag_list>div {
+	display: flex;
+	margin-bottom: 1rem;
+}
+#tag_list>div.tag {
+	width: 13rem;
+	float: left;
+	display: flex;
+	margin-bottom: 1rem;
+	justify-content: space-between;
+}
+#tag_list>div.tag>input {
+	height: 2rem;
+	width: 9rem;
+	
+}
+#tag_list>div>.button {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	box-sizing: border-box;
+	height: 2rem;
+	width: 2rem;
+	margin: 0 1rem;
+	border-radius: 0.3rem;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+#tag_list>div>label{
+	height: 2rem;
+	line-height: 2rem;
+	border-radius: 0.3rem;
+	padding: 0 0.5rem;
+	
+}
+#tag_list>div>.button {
+	background-color: #5af;
+}
+
+#tag_list>div.tag>.button {
+	background-color: #f55;
+}
+
+#tag_list>*>.button>span {
+	display: block;
+	height: 1rem;
+	width: 1rem;
+	color: #fff;
+	font-weight: bold;
+	text-align: center;
+	line-height: 1rem;
+	border-radius: 0.5rem;
+}
+
+#tag_list>*>.button:hover {
+	background-color: #fff;
+}
+#tag_list>.tag>.button:hover {
+	background-color: #fff;
+}
+#tag_list>*>.button:hover>span {
+	color: #555;
+}
+
+#tag_list>div.tag {}
+
+label {
 	font-size: 1.2rem;
 	color: #555;
 	font-weight: bold;
 }
-input{
+
+input {
 	border: none;
 	box-sizing: border-box;
 	padding-left: 0.2rem;
@@ -55,16 +134,21 @@ input{
 	color: #888;
 	width: 14rem;
 	background-color: #f0f0f0;
-	transition: background-color,box-shadow 0.2s;
+	transition: background-color, box-shadow 0.2s;
 }
+
 input:focus {
+	color: #555;
 	background-color: #fff;
 	box-shadow: #a5f 0rem 0rem 0.4rem;
 }
-input[type="file"]{
+
+input[type="file"] {
 	display: none;
 }
-input[type="submit"],form a{
+
+input[type="submit"],
+form a {
 	margin: 0 auto;
 	width: 4rem;
 	height: 1.6rem;
@@ -78,13 +162,18 @@ input[type="submit"],form a{
 	cursor: pointer;
 	transition: background-color 0.4s;
 }
-input[type="submit"]:hover,form a:hover{
+
+input[type="submit"]:hover,
+form a:hover {
 	background-color: blueviolet;
 }
-select{
+
+select {
 	font-size: 1.2rem;
 }
-select,#upload-span{
+
+select,
+#upload-span {
 	display: inline-block;
 	line-height: 2rem;
 	border: none;
@@ -98,42 +187,51 @@ select,#upload-span{
 	cursor: pointer;
 	transition: background-color 0.4s;
 }
-select:hover,#upload-span:hover{
+
+select:hover,
+#upload-span:hover {
 	background-color: blueviolet;
 }
-hr{
+
+hr {
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	border-color: #a5f;
 	width: 100%;
 }
-#cover{
+
+#cover {
 	margin: 0;
 	cursor: pointer;
 	width: 10rem;
 	height: 16rem;
 	background-color: #a5f;
 	background-size: cover;
-	background-position: 50% 50%;
+	background-position: 0% 50%;
 	transition: box-shadow 0.4s;
 }
+
 #cover:hover {
 	box-shadow: #a5f 0 0 0.5rem;
 }
-#ban-span{
+
+#ban-span {
 	background-color: red;
 	transition: background-color 0.4s;
 }
-#ban-span:hover{
+
+#ban-span:hover {
 	background-color: darkred;
 }
-ul>li>ul{
+
+ul>li>ul {
 	width: 14rem;
 	justify-content: space-between;
 	display: inline-flex;
 }
-ul>li>ul>li{
+
+ul>li>ul>li {
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -141,15 +239,18 @@ ul>li>ul>li{
 	background-color: #888;
 	transition: background-color 0.4s;
 }
-ul>li>ul>li>span{
+
+ul>li>ul>li>span {
 	margin: 0 auto;
 	color: #fff;
 	font-weight: bold;
 	padding: 0 1rem;
 }
-ul>li>ul>li:hover{
+
+ul>li>ul>li:hover {
 	background-color: #555;
 }
-ul>li>ul>li.enable{
+
+ul>li>ul>li.enable {
 	background-color: #a5f;
 }

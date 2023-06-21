@@ -126,8 +126,33 @@ span.title {
 	cursor: default;
 }
 
+
 /*顶部搜索栏样式*/
+div.search {
+	display: flex;
+	align-items: center;
+	height: 3rem;
+	width: 20rem;
+}
+div.search>input{
+	border-radius: 0.3rem;
+	border: none;
+	padding: 0 0.3rem;
+	color: #888;
+	font-size: 1rem;
+	height: 2rem;
+	width: 6rem;
+	transition: width 0.6s;
+}
+div.search>input:focus{
+	width: 100%;
+	color: #555;
+}
+
 /*顶部右侧样式*/
+div.right {
+	width: 10rem;
+}
 
 /*侧边栏样式*/
 aside {
@@ -169,10 +194,16 @@ aside>div.left .third {
 
 aside>ul {
 	width: 15rem;
+	height: calc(100% - 5rem);
 	margin: 0;
 	display: flex;
 	flex-direction: column;
 	padding-top: 2rem;
+	overflow-y: scroll;
+}
+
+aside>ul::-webkit-scrollbar {
+	display: none;
 }
 
 aside>ul>li {
@@ -263,7 +294,7 @@ section>div {
 #artwork>div {
 	display: flex;
 	justify-content: space-between;
-	height: 32rem;
+	min-height: 32rem;
 	box-sizing: border-box;
 	width: 66rem;
 	border-top-left-radius: 2rem;
@@ -276,7 +307,7 @@ section>div {
 
 #cover {
 	width: 32rem;
-	height: 32rem;
+	height: auto;
 	padding: 0;
 	border-top-left-radius: 2rem;
 	background-repeat: no-repeat;
@@ -289,9 +320,9 @@ section>div {
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
-	height: 32rem;
+	min-height: 32rem;
 	overflow: hidden;
-	padding-top: 12rem;
+	padding: 2rem 0;
 }
 
 #artwork>div>div>span {
@@ -303,7 +334,7 @@ section>div {
 }
 
 #artwork>div>div>span>* {
-	margin: 0.5rem;
+	margin: 0.25rem;
 	display: flex;
 	padding: 0rem;
 	align-items: center;
@@ -330,11 +361,48 @@ section>div {
 	box-shadow: #888 0 0 0.2rem;
 }
 
-#artwork>div>div>span>a>span {
+#artwork>div>div>span>a.t1 {
+	background-color: #5ad;
+}
+#artwork>div>div>span>a.t2 {
+	color: #fff;
+	background-color: #5da;
+}
+#artwork>div>div>span>a.t3 {
+	color: #fff;
+	background-color: #d5a;
+}
+#artwork>div>div>span>a.t1>span{
+	color: #fff;
+}
+#artwork>div>div>span>a.t2>span{
+	color: #fff;
+}
+#artwork>div>div>span>a.t3>span{
+	color: #fff;
+}
+#artwork>div>div>span>div>a {
+	box-sizing: border-box;
+	max-width: 24rem;
+	min-height: 2rem;
+	margin: 0.25rem;
+	border-radius: 0.4rem;
+	background-color: #fff;
+	box-shadow: #888 0 0 0.2rem;
+}
+
+#artwork>div>div>span>a>span,
+#artwork>div>div>span>div>a {
 	padding: 0 0.5rem;
 	line-height: 2rem;
 	font-size: 1rem;
 	color: #888;
+}
+
+#artwork>div>div>span>div {
+	max-width: 24rem;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 #comment {
@@ -514,7 +582,7 @@ textarea:focus {
 
 #comment_list {
 	margin-bottom: 1rem;
-	box-shadow: #888 0 0.15rem 0.3rem;
+	box-shadow: #888 0 0 0.3rem;
 }
 
 
@@ -538,22 +606,26 @@ textarea:focus {
 	display: flex;
 	flex-direction: column;
 }
+
 #comment_list>ul>span {
 	margin: 2rem auto;
 	display: block;
 	font-weight: bold;
 	color: #555;
 }
+
 #comment_list>ul>li {
 	padding: 1rem 0;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
 }
+
 #comment_list>ul>li:last-child {
 	border-bottom-left-radius: 1rem;
 	border-bottom-right-radius: 1rem;
 }
+
 #comment_list>ul>li:nth-of-type(odd) {
 	background-color: #fff;
 }
@@ -561,35 +633,42 @@ textarea:focus {
 #comment_list>ul>li:nth-of-type(even) {
 	background-color: #f0f0f0;
 }
-#comment_list>ul>li>div:not(.head_img){
+
+#comment_list>ul>li>div:not(.head_img) {
 	margin: 0 1rem;
 	width: 44rem;
 	display: flex;
 	flex-direction: column;
 }
-#comment_list>ul>li>div>div{
+
+#comment_list>ul>li>div>div {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
-#comment_list>ul>li>div>div>a,#comment_list>ul>li>div>div>label{
+
+#comment_list>ul>li>div>div>a,
+#comment_list>ul>li>div>div>label {
 	display: flex;
 	align-items: center;
 	height: 1rem;
 }
 
-#comment_list>ul>li>div>div>a>span{
+#comment_list>ul>li>div>div>a>span {
 	font-weight: bold;
 	color: #555;
 	font-size: 0.875rem;
 }
-#comment_list>ul>li>div>div>label>span{
+
+#comment_list>ul>li>div>div>label>span {
 	color: #888;
 	font-size: 0.875rem;
 }
-#comment_list>ul>li>div>div>pre{
+
+#comment_list>ul>li>div>div>pre {
 	font-family: inherit;
 	font-size: 0.875rem;
 	color: #555;
 }
+
 /*底部样式*/
