@@ -1,10 +1,12 @@
 import functools
 import math
 import os.path
+from typing import List, Any
 
 from flask import Blueprint, request, render_template, flash, session, redirect, url_for, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from core.db import get_db
+from core.operate import remove_doujinshi, get_tag_id
 from core.urls import init_dic
 from core.fetch import get_username, get_user_info, get_doujinshi, getAll_like, getAll_by_uploader
 from datetime import datetime
@@ -134,16 +136,16 @@ def index(doujinshi_id):
         db.commit()
         return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
 
-    url = db.execute(
+    info = db.execute(
         "SELECT doujinshi_name,author_id,type_id,uploader_id,doujinshi_cover,market,pages FROM doujinshi "
         "WHERE doujinshi_id = ? "
         "LIMIT 1",
         (doujinshi_id,)
     ).fetchone()
-    if url is None:
+    if info is None:
         flash("找不到该页面")
         return redirect(url_for('doujinshi.home'))
-    doujinshi_name, author_id, type_id, uploader_id, doujinshi_cover, market, pages = url
+    doujinshi_name, author_id, type_id, uploader_id, doujinshi_cover, market, pages = info
 
     if author_id is None:
         author_name = "未知"
@@ -177,7 +179,7 @@ def index(doujinshi_id):
     url_dic = init_dic(doujinshi_name)
 
     tag_list = []
-    tags = db.execute(
+    tags: list[Any] = db.execute(
         "SELECT tag_id,tag_name FROM tag "
         "WHERE tag_id in "
         "(SELECT tag_id FROM doujinshi_tag "
@@ -185,15 +187,20 @@ def index(doujinshi_id):
         (doujinshi_id,)
     ).fetchall()
     for tag in tags:
-        tag_list.append([url_for('tag.index', tag_id=tag[0]), tag[1]])
+        tag_list.append([url_for('tag.index', tag_id=tag[0]), tag[1], tag[0]])
     url_list = []
     urls = db.execute(
         "SELECT platform_id,doujinshi_url FROM doujinshi_url "
         "WHERE doujinshi_id =?",
         (doujinshi_id,)
     ).fetchall()
-    for url in urls:
-        url_list.append([['', 'dlsite', 'melonbooks', 'fanza'][url[0]], url[1]])
+
+    dlsite_logo = url_for('static', filename='img/site/logo-dlsite.png')
+    melonbooks_logo = url_for('static', filename='img/site/logo-melonbooks.png')
+    toranoana_logo = url_for('static', filename='img/site/logo-toranoana.svg')
+
+    for info in urls:
+        url_list.append([['',dlsite_logo,melonbooks_logo,toranoana_logo][info[0]], info[1]])
 
     info_list = db.execute(
         "SELECT user_id,comment,date FROM comment "
@@ -223,8 +230,10 @@ def index(doujinshi_id):
 
         'collected': collected,
         'collect': url_for('doujinshi.collect', doujinshi_id=doujinshi_id),
-        'head_img': head_img,
+        'remove': url_for('doujinshi.remove', doujinshi_id=doujinshi_id),
+        'edit': url_for('doujinshi.edit', doujinshi_id=doujinshi_id),
 
+        'head_img': head_img,
         'comment_list': comment_list,
     })
 
@@ -266,6 +275,112 @@ def collect(doujinshi_id):
             return "False"
         except ValueError:
             return "True"
+
+
+@bp.route('/<doujinshi_id>/remove', methods=('GET', 'POST'))
+def remove(doujinshi_id):
+    if request.method == 'GET':
+        return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+    user_id = session.get('user_id')
+    if user_id != 0:
+        return redirect(url_for('user.route'))
+
+    result = remove_doujinshi(doujinshi_id)
+    if result == -2:
+        return "ERROR ID"
+    if result == -1:
+        return "FAIL"
+    if result == 0:
+        return "SUCCESS"
+
+
+@bp.route('/<doujinshi_id>/edit', methods=('GET', 'POST'))
+def edit(doujinshi_id):
+    if request.method == 'GET':
+        return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+    user_id = session.get('user_id')
+    if user_id is None:
+        return redirect(url_for('user.route'))
+
+    db = get_db()
+    info = db.execute(
+        "SELECT * FROM doujinshi "
+        "WHERE doujinshi_id = ? "
+        "LIMIT 1",
+        (doujinshi_id,)
+    ).fetchone()
+    if info is None:
+        flash("错误的ID")
+        return redirect(url_for('doujinshi.home'))
+
+    app = request.form['append']
+    rem = request.form['remove']
+    if app != "":
+        app = app.split("#")
+    else:
+        app = []
+    if rem != "":
+        rem = rem.split('/')
+    else:
+        rem = []
+    while "" in app:
+        app.remove("")
+    while "" in rem:
+        rem.remove("")
+    try:
+        rem = list(map(int, rem))
+    except ValueError:
+        flash("操作错误")
+        return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+
+    for tag_id in rem:
+        if db.execute(
+                "SELECT * FROM doujinshi_tag "
+                "WHERE doujinshi_id = ? AND tag_id = ? "
+                "LIMIT 1",
+                (doujinshi_id, tag_id)
+        ).fetchone() is None:
+            flash("删除操作错误")
+            return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+
+        try:
+            db.execute(
+                "INSERT INTO tag_op_record (doujinshi_id,tag_id,editor_id,op_type) "
+                "VALUES (?,?,?,\"DELETE\")",
+                (doujinshi_id, tag_id, user_id)
+            )
+            db.commit()
+            db.execute(
+                "DELETE FROM doujinshi_tag "
+                "WHERE doujinshi_id = ? AND tag_id = ?",
+                (doujinshi_id, tag_id)
+            )
+            db.commit()
+        except ValueError:
+            flash("删除操作错误")
+            return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+
+    for tag_name in app:
+        tag_id = get_tag_id(tag_name)
+        try:
+            db.execute(
+                "INSERT INTO tag_op_record (doujinshi_id,tag_id,editor_id,op_type) "
+                "VALUES (?,?,?,\"INSERT\")",
+                (doujinshi_id, tag_id, user_id)
+            )
+            db.commit()
+            db.execute(
+                "INSERT INTO doujinshi_tag (doujinshi_id,tag_id) "
+                "VALUES (?, ?)",
+                (doujinshi_id, tag_id)
+            )
+            db.commit()
+        except ValueError:
+            flash("插入操作错误")
+            return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
+
+    flash("操作成功")
+    return redirect(url_for('doujinshi.index', doujinshi_id=doujinshi_id))
 
 
 @bp.route('/search', methods=['GET', 'POST'])
@@ -321,7 +436,7 @@ def uploader(uploader_id):
     url_dic = init_dic("上传者:" + uploader_name)
     doujinshi_list = getAll_by_uploader(uploader_id)
     url_dic.update({
-        'uploader_page': url_for('user.index',user_id = uploader_id),
+        'uploader_page': url_for('user.index', user_id=uploader_id),
         'uploader_name': uploader_name,
         'doujinshi_list': doujinshi_list,
     })

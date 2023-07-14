@@ -44,6 +44,7 @@ def init_dic(title="未命名的页面"):
         'dev': dev,
         'admin': url_for('admin.index'),
         'review': url_for('admin.review'),
+        'recover': url_for('admin.recover'),
         "batch_import": url_for("admin.batch_import"),
         "batch_url": url_for("admin.batch_url"),
     }

@@ -92,14 +92,14 @@ def add_tag(doujinshi_id, tag_name):
 
 def insert_doujinshi(info_dic):
     sql = 'INSERT INTO doujinshi (type_id,uploader_id,doujinshi_name,author_id,doujinshi_cover,market,pages,' \
-          'class) VALUES (\\replace\\,\\replace\\,"\\replace\\",\\replace\\,\\replace\\,' \
+          'class) VALUES (\\replace\\,\\replace\\,\'\\replace\\\',\\replace\\,\\replace\\,' \
           '\\replace\\,\\replace\\,\\replace\\)'
     db = get_db()
 
     if 'type_id' in info_dic and 'uploader_id' in info_dic and 'doujinshi_name' in info_dic:
         type_id = info_dic['type_id']
         uploader_id = info_dic['uploader_id']
-        doujinshi_name = info_dic['doujinshi_name']
+        doujinshi_name = info_dic['doujinshi_name'].replace('\'', '\'\'')
     else:
         return -1
 
@@ -114,7 +114,7 @@ def insert_doujinshi(info_dic):
         else:
             author_id = get_author_id(author_name)
 
-            if author_id is -1:
+            if author_id == -1:
                 db.execute("INSERT INTO author(author_name) VALUES (?)", (author_name,))
                 db.commit()
                 author_id = db.execute(
@@ -148,7 +148,7 @@ def insert_doujinshi(info_dic):
         if doujinshi_cover is None:
             sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + doujinshi_cover + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + doujinshi_cover + "'", 1)
     else:
         sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
 
@@ -157,7 +157,7 @@ def insert_doujinshi(info_dic):
         if market is None:
             sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + market + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + market + "'", 1)
     else:
         sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
 
@@ -166,7 +166,7 @@ def insert_doujinshi(info_dic):
         if pages is None:
             sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + pages + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + pages + "'", 1)
     else:
         sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
 
@@ -191,20 +191,20 @@ def insert_doujinshi(info_dic):
         if tag_list is None:
             return 0
         for tag in tag_list:
-            add_tag(doujinshi_id,tag)
+            add_tag(doujinshi_id, tag)
     return 0
 
 
 def insert_unconfirmed(info_dic):
     sql = 'INSERT INTO unconfirmed (type_id,uploader_id,doujinshi_name,author_name,doujinshi_cover,market,pages,' \
-          'tag_list,class) VALUES (\\replace\\,\\replace\\,"\\replace\\",\\replace\\,\\replace\\,\\replace\\,' \
+          'tag_list,class) VALUES (\\replace\\,\\replace\\,\'\\replace\\\',\\replace\\,\\replace\\,\\replace\\,' \
           '\\replace\\,\\replace\\,\\replace\\)'
     db = get_db()
 
     if 'type_id' in info_dic and 'uploader_id' in info_dic and 'doujinshi_name' in info_dic:
         type_id = info_dic['type_id']
         uploader_id = info_dic['uploader_id']
-        doujinshi_name = info_dic['doujinshi_name']
+        doujinshi_name = info_dic['doujinshi_name'].replace('\'', '\'\'')
     else:
         return -1
 
@@ -217,7 +217,7 @@ def insert_unconfirmed(info_dic):
         if author_name is None:
             sql = sql.replace('author_name,', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + author_name + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + author_name + "'", 1)
     else:
         sql = sql.replace('author_name,', '').replace(',\\replace\\', '', 1)
 
@@ -226,7 +226,7 @@ def insert_unconfirmed(info_dic):
         if doujinshi_cover is None:
             sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + doujinshi_cover + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + doujinshi_cover + "'", 1)
     else:
         sql = sql.replace(',doujinshi_cover', '').replace(',\\replace\\', '', 1)
 
@@ -235,7 +235,7 @@ def insert_unconfirmed(info_dic):
         if market is None:
             sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + market + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + market + "'", 1)
     else:
         sql = sql.replace(',market', '').replace(',\\replace\\', '', 1)
 
@@ -244,7 +244,7 @@ def insert_unconfirmed(info_dic):
         if pages is None:
             sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + pages + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + pages + "'", 1)
     else:
         sql = sql.replace(',pages', '').replace(',\\replace\\', '', 1)
 
@@ -253,7 +253,7 @@ def insert_unconfirmed(info_dic):
         if tag_list is None:
             sql = sql.replace(',tag_list', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + tag_list + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + tag_list + "'", 1)
     else:
         sql = sql.replace(',tag_list', '').replace(',\\replace\\', '', 1)
 
@@ -262,7 +262,7 @@ def insert_unconfirmed(info_dic):
         if class_ is None:
             sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
         else:
-            sql = sql.replace('\\replace\\', '"' + class_ + '"', 1)
+            sql = sql.replace('\\replace\\', "'" + class_ + "'", 1)
     else:
         sql = sql.replace(',class', '').replace(',\\replace\\', '', 1)
 
@@ -273,3 +273,101 @@ def insert_unconfirmed(info_dic):
     except ValueError:
         return -2
     return 0
+
+def remove_doujinshi(doujinshi_id):
+    db = get_db()
+    if db.execute(
+            "SELECT * FROM doujinshi "
+            "WHERE doujinshi_id = ? "
+            "LIMIT 1",
+            (doujinshi_id,)
+    ).fetchone() is None:
+        return -2
+
+    db.execute(
+        "DELETE FROM doujinshi_tag "
+        "WHERE doujinshi_id = ?",
+        (doujinshi_id,)
+    )
+    try:
+        db.commit()
+    except ValueError:
+        return -1
+
+    db.execute(
+        "DELETE FROM doujinshi_url "
+        "WHERE doujinshi_id = ?",
+        (doujinshi_id,)
+    )
+    try:
+        db.commit()
+    except ValueError:
+        return -1
+
+    db.execute(
+        "DELETE FROM collection "
+        "WHERE doujinshi_id = ?",
+        (doujinshi_id,)
+    )
+    try:
+        db.commit()
+    except ValueError:
+        return -1
+
+    db.execute(
+        "DELETE FROM comment "
+        "WHERE doujinshi_id = ?",
+        (doujinshi_id,)
+    )
+    try:
+        db.commit()
+    except ValueError:
+        return -1
+
+    db.execute(
+        "DELETE FROM doujinshi "
+        "WHERE doujinshi_id = ?",
+        (doujinshi_id,)
+    )
+    try:
+        db.commit()
+    except ValueError:
+        return -1
+
+    return 0
+
+
+def get_recover_id(doujinshi_id):
+    db = get_db()
+    recover_id = db.execute(
+        "SELECT recover_id FROM doujinshi_backup "
+        "WHERE doujinshi_id = ? "
+        "LIMIT 1",
+        (doujinshi_id,)
+    ).fetchone()
+    if recover_id is None:
+        return -1
+    return recover_id[0]
+
+
+def recover_doujinshi(recover_id):
+    db = get_db()
+    db.execute(
+        "INSERT INTO doujinshi "
+        "(doujinshi_id,author_id,type_id,uploader_id,doujinshi_name,doujinshi_cover,market,pages,class) "
+        "SELECT doujinshi_id,author_id,type_id,uploader_id,doujinshi_name,doujinshi_cover,market,pages,class "
+        "FROM doujinshi_backup "
+        "WHERE recover_id = ?",
+        (recover_id,)
+    )
+    try:
+        db.commit()
+        db.execute(
+            "DELETE FROM doujinshi_backup "
+            "WHERE recover_id = ?",
+            (recover_id,)
+        )
+        db.commit()
+        return 0
+    except ValueError:
+        return -1

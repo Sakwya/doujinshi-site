@@ -77,11 +77,11 @@
 							<div><span class="title" onclick="window.location='{{manga}}'">DouJinShi</span></div>
 						</div>
 						<div class="search">
-							<form id = "search" action="{{search}}" method="get" style="display: none;"></form>
-							<input type="search" form="search" name="key" placeholder="搜索……" required/>
+							<form id="search" action="{{search}}" method="get" style="display: none;"></form>
+							<input type="search" form="search" name="key" placeholder="搜索……" required />
 						</div>
 						<div class="right">
-				
+
 						</div>
 					</nav>
 				</header>
@@ -125,6 +125,7 @@
 						<li><span>管理员</span></li>
 						<li><a href="{{admin}}">管理员界面</a></li>
 						<li><a href="{{review}}">审核</a></li>
+						<li><a href="{{recover}}">恢复</a></li>
 						<li><a href="{{batch_import}}">批量导入</a></li>
 						{% endif %}
 					</ul>
@@ -165,7 +166,7 @@
 									<a class="t1" href="{{doujinshi_manga}}"><span>{{type}}</span></a>
 									{% endif %}
 									{% if type == "画册" %}
-									<a class="t2" href="{{doujinshi_illustration}}"><span>{{type}}</a></span>
+									<a class="t2" href="{{doujinshi_illustration}}"><span>{{type}}</span></a>
 									{% endif %}
 									{% if type == "同人文" %}
 									<a class="t3" href="{{doujinshi_novel}}"><span>{{type}}</span></a>
@@ -180,15 +181,13 @@
 										href="{{uploader_page}}"><span>{{uploader_name}}</span></a></span>
 
 								<span><label><span>标签:</span></label>
-									{% if tag_list|length == 0 %}
-									<a><span>暂无</span></a>
-									{% else %}
-									<div>
+									<div class="edit" style="margin: 0;">
 										{% for tag in tag_list %}
-										<a href="{{tag[0]}}"><span>{{tag[1]}}</span></a>
+										<a href="{{tag[0]}}" name="{{tag[2]}}"
+											onclick="return !window.edit;"><span>{{tag[1]}}</span>
+											<button onclick="disable('{{tag[2]}}');">-</button></a>
 										{% endfor %}
 									</div>
-									{% endif %}
 								</span>
 
 								<span><label><span>网址:</span></label>
@@ -196,28 +195,33 @@
 									<a><span>暂无</span></a>
 									{% else %}
 									{% for url in url_list %}
-									{% if url[0] == 'dlsite' %}
 									<a target="_blank" href="{{url[1]}}"><span
-											style="width: 4rem;height:1rem;background-repeat: no-repeat;background-size: contain;background-position: 50% 50%;background-image: url(/static/img/site/logo-dlsite.png);"></span></a>
-									{% endif %}
-									{% if url[0] == 'melonbooks' %}
-									<a target="_blank" href="{{url[1]}}"><span
-											style="width: 4rem;height:1rem;background-repeat: no-repeat;background-size: contain;background-position: 50% 50%;background-image: url(/static/img/site/logo-melonbooks.png);"></span></a>
-									{% endif %}
+											style="width: 4rem;height:1rem;background-repeat: no-repeat;background-size: contain;background-position: 50% 50%;background-image: url({{url[0]}});"></span></a>
+									
 									{% endfor %}
 									{% endif %}
 								</span>
 								<script>
-									const color_list = ['#7ad', '#7da', '#a7d', '#ad7', '#d7a', '#da7']
+									const color_list = ['#7ad', '#7da', '#a7d', '#ad7', '#d7a', '#da7'];
 									const color = (ele) => {
 										let index = Math.floor(Math.random() * 6)
 										ele.style.backgroundColor = color_list[index]
 										ele.style.color = "#fff"
 										console.log(ele.style.backgroundColor)
 									}
-									const tag_list = document.querySelectorAll("#artwork > div > div > span > div > a")
+									var tag_list = document.querySelectorAll("#artwork > div > div > span > div > a")
 									for (var i = 0; i < tag_list.length; i++) {
 										color(tag_list[i])
+									}
+									tag_list = document.querySelector(".edit");
+									tag_list.className = "";
+									const disable = (name) => {
+										let tag = document.querySelector("[name='" + name + "']")
+										if (tag.className == "disabled") {
+											tag.className = ""
+											return
+										}
+										tag.className = "disabled"
 									}
 								</script>
 							</div>
@@ -228,8 +232,34 @@
 					<section id="comment">
 						<div>
 							<div id="tools_bar">
+								<span></span><span></span>
 								<div class="{{collected}}" onclick="collect();"><span>收藏<span>✔</span></span></div>
+								{% if dev == True %}
+								<div class="Remove" onclick="remove();"><span>删除</span></div>
+								<script>
+									const remove = () => {
+										let x = confirm("确定要删除《" + "{{doujinshi_name}}" + "》吗？")
+										if (x == false) {
+											return
+										}
+										xmlhttp.open('POST', '{{remove}}', false)
+										xmlhttp.send()
+										alert(xmlhttp.responseText)
+										location.reload()
+									}
+								</script>
+								{% else %}
 								<span></span>
+								{% endif %}
+								<span></span><span></span><span></span><span></span>
+								<div class="False" style="margin: 0;" onclick="edit();"><span>编辑标签</span></div>
+								<div class="disabled" style="margin: 0;" onclick="app();"><span>添加</span></div>
+								<div class="disabled" style="margin: 0;" onclick="sub()"><span>确定</span></div>
+								<span></span><span></span>
+								<form id="edit_form" method="POST" action="{{edit}}" style="display: none;">
+									<input type="text" name="remove" />
+									<input type="text" name="append" />
+								</form>
 								<script type="text/javascript">
 									var xmlhttp;
 									if (window.XMLHttpRequest) {
@@ -243,7 +273,77 @@
 										xmlhttp.send()
 										collect_span.className = xmlhttp.responseText;
 									}
-									const collect_span = document.getElementById("tools_bar").children[0]
+									window.edit = false;
+									const edit = () => {
+										if (window.edit) {
+											tag_list.className = "";
+											edit_span.classList = "False";
+											app_span.classList = "disabled";
+											sub_span.classList = "disabled";
+											window.edit = false;
+											return
+										}
+										tag_list.className = "edit"
+										edit_span.classList = "True"
+										app_span.classList = "False";
+										sub_span.classList = "False";
+										window.edit = true
+									}
+									const app = () => {
+										let name = prompt("请输入Tag名称")
+										let patt = /[^#\n\r\t]+/g
+										if (!patt.test(name)) {
+											alert("请输入不包含特殊字符的名称")
+											return
+										}
+										if (tag_list.innerText.split('\n').indexOf(name) != -1) {
+											alert("无法添加相同名称的Tag");
+											return
+										}
+										var a = document.createElement("a")
+										a.href = "#"
+										a.className = 'new'
+										var span = document.createElement("span")
+										span.innerHTML = name
+										var button = document.createElement("button")
+										button.innerHTML = "-"
+										a.appendChild(span)
+										a.appendChild(button)
+										button.onclick = function() {
+											tag_list.removeChild(a)
+										};
+										tag_list.appendChild(a)
+									}
+									const input_a = document.querySelector("input[name='append']")
+									const input_r = document.querySelector("input[name='remove']")
+									const unit = () => {
+										let a = document.querySelectorAll("a.disabled");
+										let str = "";
+										for(let i = 0;i<a.length;i++){
+											if(i != 0){
+												str = str+"/";
+											}
+											str = str+a[i].getAttribute("name");
+										}
+										input_r.value = str;
+										
+										a = document.querySelectorAll("a.new>span");
+										str = "";
+										for(let i = 0;i<a.length;i++){
+											str = str+"#"+a[i].innerHTML;
+										}
+										input_a.value = str;
+									}
+									const sub = () => {
+										unit()
+										document.getElementById("edit_form").submit();
+									}
+
+									let op_list = document.querySelectorAll("#tools_bar>div");
+									const collect_span = op_list[0];
+									const edit_span = op_list[2];
+									const app_span = op_list[3];
+									const sub_span = op_list[4];
 								</script>
 							</div>
 							<form id="comment_input" method="post">

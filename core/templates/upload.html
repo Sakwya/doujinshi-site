@@ -125,6 +125,7 @@
 						<li><span>管理员</span></li>
 						<li><a href="{{admin}}">管理员界面</a></li>
 						<li><a href="{{review}}">审核</a></li>
+						<li><a href="{{recover}}">恢复</a></li>
 						<li><a href="{{batch_import}}">批量导入</a></li>
 						{% endif %}
 					</ul>
@@ -166,7 +167,8 @@
 									<option value="{{author}}">
 										{% endfor %}
 								</datalist>
-								<li style="grid-area: 7/1/9/2;"><label>类型:</label><select name="type_id">
+								<li style="grid-area: 7/1/9/2;"><label>类型:</label>
+									<select name="type_id">
 										<option value="1">漫画/漫画本</option>
 										<option value="2">画册/画本</option>
 										<option value="3">同人文</option>
@@ -229,7 +231,7 @@
 									input.className = "tag_input"
 									input.setAttribute("required", '')
 									input.setAttribute("list", 'tag')
-									input.setAttribute("pattern","[^#]+")
+									input.setAttribute("pattern","[^#\n\r\t]+")
 									input.addEventListener("keyup",function(){
 										unit();
 									})

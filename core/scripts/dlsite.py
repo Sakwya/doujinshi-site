@@ -30,6 +30,7 @@ def get_info_from_dlsite(type_id, page):
     html = request(url, 0)
     print("获取第" + page + "页文档成功")
     document = BeautifulSoup(html, "html.parser")
+    print(url)
 
     posts = document.select(".work_img_main")
     urls = []
@@ -103,12 +104,10 @@ def get_info_from_dlsite(type_id, page):
 # get_info_from_dlsite(0, 3)
 # get_info_from_dlsite(0, 4)
 # get_info_from_dlsite(0, 5)
-
+#
 # get_info_from_dlsite(1, 1)
 # get_info_from_dlsite(1, 2)
 # get_info_from_dlsite(1, 3)
 # get_info_from_dlsite(2, 1)
 # get_info_from_dlsite(2, 2)
-# # get_info_from_dlsite(2, 3)
-# for i in range(3,5):
-#     get_info_from_dlsite(3, i)
+# get_info_from_dlsite(2, 3)

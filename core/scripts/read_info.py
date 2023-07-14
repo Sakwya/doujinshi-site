@@ -190,6 +190,99 @@ def read_melonbooks():
     return info
 
 
+def read_toranoana():
+    with open(os.getcwd() + "\\core\\scripts\\toranoana.info", mode='r', encoding="utf-8") as f:
+        records = f.read().split('\n')
+    records.remove('')
+
+    info = []
+    for record in records:
+        toranoana = ast.literal_eval(record)
+        class_dic = {
+            '一般向け': 0,
+        }
+        tags = toranoana['标签']
+        tag_list = []
+        key_list = ['#']
+        while len(tags) > 0:
+            tag = tags.pop(0)
+            insert = True
+            for key in key_list:
+                if tag.find(key) != -1:
+                    insert = False
+                    break
+            if insert:
+                tag_list.append(tag)
+
+        if 'ジャンル/サブジャンル' in toranoana:
+            series = toranoana['ジャンル/サブジャンル']
+            if type(series) is list:
+                for tag in series:
+                    tag_list.append(tag)
+            else:
+                tag_list.append(series)
+
+        if 'メインキャラ' in toranoana:
+            mainchara = toranoana['メインキャラ']
+            if type(mainchara) is list:
+                for tag in mainchara:
+                    tag_list.append(tag)
+
+        if '種別/サイズ' in toranoana:
+            type_ = toranoana['種別/サイズ']
+            if type(type_) is list:
+                type_name = type_[0]
+                pages = type_[-1]
+            else:
+                type_name = type_
+                pages = None
+            if '漫画' in type_name:
+                type_id = 1
+            elif 'イラスト' in type_name:
+                type_id = 2
+            elif '小説' in type_name:
+                type_id = 3
+            else:
+                # print(type_name,toranoana['网址'])
+                continue
+        else:
+            continue
+
+        class_ = 1
+
+        try:
+            market = toranoana['初出イベント']
+            market = market.split(maxsplit=1)[-1]
+            for day in ['（1日目）', '（2日目）', '（3日目）', '（4日目）', '（5日目）', '-day1-', '-day2-', '-day3-', '-day4-',
+                        '-day5-']:
+                market = market.replace(day, '').strip()
+        except KeyError:
+            market = None
+
+        doujinshi_cover = toranoana['封面']
+        old_path = os.getcwd() + '\\core\\scripts\\cover\\' + doujinshi_cover
+        new_path = os.getcwd() + '\\core\\static\\img\\cover\\' + doujinshi_cover
+
+        if not os.path.exists(new_path):
+            copyfile(old_path, new_path)
+        info.append({
+            'type_id': type_id,
+            'platform_id': 3,
+
+            'doujinshi_name': toranoana['标题'],
+            'doujinshi_url': toranoana['网址'],
+            'author_name': toranoana['作者'],
+            'author_url': toranoana['作者网址'],
+            'pages': pages,
+            'market': market,
+            'class': class_,
+            'doujinshi_cover': doujinshi_cover,
+            'uploader_id': 0,
+            'tag_list': tag_list,
+        })
+    return info
+
+
 def not_exist(info):
     db = get_db()
     new_info = []

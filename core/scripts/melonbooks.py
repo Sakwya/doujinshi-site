@@ -8,20 +8,20 @@ def get_info_from_melonbooks(order_id, page):
     page = str(page)
     if order_id == 1:
         url = "https://www.melonbooks.co.jp/tags/index.php?genre=&chara=&tag=&fromagee_flg=0&orderby=&disp_number=30" \
-              "&pageno=" + str(page) + "&text_type=all&name=&category_ids=1&child_category_ids=9&product_type=st" \
+              "&pageno=" + page + "&text_type=all&name=&category_ids=1&child_category_ids=9&product_type=st" \
                                        "&is_end_of_sale%5B%5D=1&is_end_of_sale2=1&sale_date_before=&sale_date_after=" \
                                        "&publication_date_before=&publication_date_after="
 
     else:
         url = "https://www.melonbooks.co.jp/tags/index.php?genre=&chara=&tag=&fromagee_flg=0&orderby=popular" \
-              "&disp_number=30&pageno=" + str(page) + "&text_type=all&name=&category_ids=1&child_category_ids=9" \
+              "&disp_number=30&pageno=" + page + "&text_type=all&name=&category_ids=1&child_category_ids=9" \
                                                       "&product_type=all&is_end_of_sale%5B%5D=1&is_end_of_sale2=1" \
                                                       "&sale_date_before=&sale_date_after=&publication_date_before=" \
                                                       "&publication_date_after="
     html = request(url, 0)
     print("获取第" + page + "页文档成功")
     document = BeautifulSoup(html, "html.parser")
-
+    print(url)
     posts = document.select(".item-image")
     urls = []
     for post in posts:

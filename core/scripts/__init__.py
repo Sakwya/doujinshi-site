@@ -22,6 +22,10 @@ cookies = {
     'MELONBOOKS_CS_CHECK_NEWS':'1',
     'COAG_MELONBOOKS':'2',
     'AUTH_ADULT':'1',
+
+    'fsfew':'0',
+    'cexists':'0',
+    'csfew':'0',
 }
 
 def request(url, cache = 1):

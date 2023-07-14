@@ -3,7 +3,7 @@ import datetime, random
 from core.db import get_db
 import os
 
-type_list = ["未知", "漫画", "画册", "同人文", "刊物"]
+type_list = ["未知", "漫画", "画册", "同人文", "写真集"]
 
 
 def get_username(user_id):
@@ -279,14 +279,16 @@ def get_doujinshi(num=30, type_id=0, start=0):
     if start == 0:
         if type_id == 0:
             info = db.execute(
-                "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM doujinshi_in_order "
+                "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM doujinshi "
+                "ORDER BY doujinshi_id DESC "
                 "LIMIT ?",
                 (num,)
             ).fetchall()
         else:
             info = db.execute(
-                "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM doujinshi_in_order "
+                "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM doujinshi "
                 "WHERE type_id = ? "
+                "ORDER BY doujinshi_id DESC "
                 "LIMIT ?",
                 (type_id, num)
             ).fetchall()
@@ -294,28 +296,28 @@ def get_doujinshi(num=30, type_id=0, start=0):
         if type_id == 0:
             info = db.execute(
                 "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM doujinshi_in_order "
-                "WHERE no>? AND no<=?"
+                "WHERE no>? AND no<=? "
                 "LIMIT ?",
                 (start, start + num, num)
             ).fetchall()
         elif type_id == 1:
             info = db.execute(
                 "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM manga_in_order "
-                "WHERE no>? AND no<=? AND type_id = ?"
+                "WHERE no>? AND no<=? AND type_id = ? "
                 "LIMIT ?",
                 (start, start + num, 1, num)
             ).fetchall()
         elif type_id == 2:
             info = db.execute(
                 "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM illustration_in_order "
-                "WHERE no>? AND no<=? AND type_id = ?"
+                "WHERE no>? AND no<=? AND type_id = ? "
                 "LIMIT ?",
                 (start, start + num, 2, num)
             ).fetchall()
         elif type_id == 3:
             info = db.execute(
                 "SELECT doujinshi_id,doujinshi_name,doujinshi_cover,type_id FROM novel_in_order "
-                "WHERE no>? AND no<=? AND type_id = ?"
+                "WHERE no>? AND no<=? AND type_id = ? "
                 "LIMIT ?",
                 (start, start + num, 3, num)
             ).fetchall()
@@ -344,7 +346,7 @@ def get_tag(num=30, start=0):
     else:
         info = db.execute(
             "SELECT no, tag_id,tag_name,num FROM tag_in_order "
-            "WHERE no>? AND no<=?"
+            "WHERE no>? AND no<=? "
             "LIMIT ?",
             (start, start + num, num)
         ).fetchall()

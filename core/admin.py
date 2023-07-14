@@ -5,8 +5,8 @@ from flask import Blueprint, request, render_template, flash, session, redirect,
 
 from core.db import get_db
 from core.fetch import get_username
-from core.operate import insert_doujinshi, get_doujinshi_id, create_doujinshi_url
-from core.scripts.read_info import read_dlsite, not_exist, read_melonbooks
+from core.operate import insert_doujinshi, get_doujinshi_id, create_doujinshi_url, recover_doujinshi
+from core.scripts.read_info import read_dlsite, not_exist, read_melonbooks, read_toranoana
 from core.urls import init_dic
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -20,6 +20,7 @@ def index():
     url_dic = init_dic()
     url_dic.update({
         "review_cover": url_for("static", filename="img/admin/review.jpg"),
+        "recover_cover": url_for("static", filename="img/admin/recover.jpg"),
         "batch_import_cover": url_for('static', filename="img/admin/import.jpg"),
         "batch_url_cover": url_for('static', filename="img/admin/url.jpg"),
     })
@@ -222,6 +223,43 @@ def ban():
     return redirect(url_for("admin.review"))
 
 
+@bp.route('/recover', methods=('GET', 'POST'))
+def recover():
+    user_id = session.get('user_id')
+    if user_id != 0:
+        return redirect(url_for("user.route"))
+
+    if request.method == 'POST':
+        recover_id = request.form['recover_id']
+        db = get_db()
+        if db.execute(
+                "SELECT * FROM doujinshi_backup "
+                "WHERE recover_id = ?",
+                (recover_id,)
+        ) is None:
+            flash("恢复失败")
+        else:
+            if recover_doujinshi(recover_id) == -1:
+                flash("错误")
+            else:
+                flash("恢复成功")
+    db = get_db()
+    info = db.execute(
+        "SELECT type_id, recover_id, doujinshi_name, date FROM doujinshi_backup",
+        ()
+    ).fetchall()
+    type_list = ["未知", "漫画", "画册", "同人文"]
+    recover_list = []
+    for piece in info:
+        pieces = [type_list[piece[0]], piece[1], piece[2], piece[3]]
+        recover_list.append(pieces)
+    url_dic = init_dic("RECOVER")
+    url_dic.update({
+        'recover_list': recover_list,
+    })
+    return render_template('recover.html', **url_dic)
+
+
 @bp.route('/batch_import', methods=('GET', 'POST'))
 def batch_import():
     user_id = session.get('user_id')
@@ -231,7 +269,7 @@ def batch_import():
     if request.method == 'POST':
         type_id = request.form['type_id']
         site = request.form['site']
-        print(site,type_id)
+        print(site, type_id)
         if site == '1':
             dlsite = read_dlsite()
             dlsite = not_exist(dlsite)
@@ -258,13 +296,28 @@ def batch_import():
                     elif response == -2:
                         flash("提交失败")
                         break
+        if site == '3':
+            toranoana = read_toranoana()
+            toranoana = not_exist(toranoana)
+            for info_dic in toranoana:
+                n_type_id = str(info_dic['type_id'])
+                if n_type_id == type_id:
+                    response = insert_doujinshi(info_dic)
+                    if response == -1:
+                        flash("传值错误")
+                        break
+                    elif response == -2:
+                        flash("提交失败")
+                        break
     dlsite = read_dlsite()
     melonbooks = read_melonbooks()
+    toranoana = read_toranoana()
 
     info_list = []
 
     dlsite_logo = url_for('static', filename='img/site/logo-dlsite.png')
     melonbooks_logo = url_for('static', filename='img/site/logo-melonbooks.png')
+    toranoana_logo = url_for('static', filename='img/site/logo-toranoana.svg')
     # for
     manga = []
     illustration = []
@@ -310,10 +363,33 @@ def batch_import():
     info_list.append(['画册', melonbooks_logo, len(illustration), 2, 2])
     info_list.append(['同人文', melonbooks_logo, len(novel), 3, 2])
 
+    manga = []
+    illustration = []
+    novel = []
+
+    for info_dic in toranoana:
+        type_id = info_dic['type_id']
+        if type_id == 1:
+            manga.append(info_dic)
+        elif type_id == 2:
+            illustration.append(info_dic)
+        elif type_id == 3:
+            novel.append(info_dic)
+
+    manga = not_exist(manga)
+    illustration = not_exist(illustration)
+    novel = not_exist(novel)
+    new_num += len(manga) + len(illustration) + len(novel)
+
+    info_list.append(['漫画', toranoana_logo, len(manga), 1, 3])
+    info_list.append(['画册', toranoana_logo, len(illustration), 2, 3])
+    info_list.append(['同人文', toranoana_logo, len(novel), 3, 3])
+
     url_dic = init_dic()
     url_dic.update({
         'dlsite': len(dlsite),
         'melonbooks': len(melonbooks),
+        'toranoana': len(toranoana),
         'new_num': new_num,
         'info_list': info_list,
     })
@@ -335,6 +411,13 @@ def batch_url():
         create_doujinshi_url(doujinshi_id, platform_id, doujinshi_url)
     melonbooks = read_melonbooks()
     for info_dic in melonbooks:
+        doujinshi_name = info_dic['doujinshi_name']
+        doujinshi_id = get_doujinshi_id(doujinshi_name)
+        doujinshi_url = info_dic['doujinshi_url']
+        platform_id = info_dic['platform_id']
+        create_doujinshi_url(doujinshi_id, platform_id, doujinshi_url)
+    toranoana = read_toranoana()
+    for info_dic in toranoana:
         doujinshi_name = info_dic['doujinshi_name']
         doujinshi_id = get_doujinshi_id(doujinshi_name)
         doujinshi_url = info_dic['doujinshi_url']

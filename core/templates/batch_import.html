@@ -126,6 +126,7 @@
 						<li><span>管理员</span></li>
 						<li><a href="{{admin}}">管理员界面</a></li>
 						<li><a href="{{review}}">审核</a></li>
+						<li><a href="{{recover}}">恢复</a></li>
 						<li><a class="active">批量导入</a></li>
 						{% endif %}
 					</ul>
@@ -159,6 +160,7 @@
 						<ul>
 							<li><label>dlsite数据:</label><span>{{dlsite}}条</span></li>
 							<li><label style="width: 12rem;">melonbooks数据:</label><span>{{melonbooks}}条</span></li>
+							<li><label style="width: 10rem;">toranoana数据:</label><span>{{toranoana}}条</span></li>
 							<li><label>未导入数据:</label><span>{{new_num}}条</span></li>
 						</ul>
 					</section>
@@ -175,24 +177,13 @@
 							{% for info in info_list %}
 							{% if info[2] == 0 %}
 							{% else %}
-							{% if info[4] == 1 %}
 							<div>
 								<span><a>{{info[0]}}</a></span>
 								<span><a
-										style="width: 100%;height:60%;background: url({{url_for('static', filename='img/site/logo-dlsite.png')}}) no-repeat;background-size: contain;background-position: 50% 50%;"></a></span>
+										style="width: 100%;height:60%;background: url({{info[1]}}) no-repeat;background-size: contain;background-position: 50% 50%;"></a></span>
 								<span><a>{{info[2]}}</a></span>
-								<span><a onclick="submit({{info[3]}},1);">处理</a></span>
+								<span><a onclick="submit({{info[3]}},{{info[4]}});">处理</a></span>
 							</div>
-							{% endif %}
-							{% if info[4] == 2 %}
-							<div>
-								<span><a>{{info[0]}}</a></span>
-								<span><a
-										style="width: 100%;height:80%;background: url({{url_for('static', filename='img/site/logo-melonbooks.png')}}) no-repeat;background-size: contain;background-position: 50% 50%;"></a></span>
-								<span><a>{{info[2]}}</a></span>
-								<span><a onclick="submit({{info[3]}},2);">处理</a></span>
-							</div>
-							{% endif %}
 							{% endif %}
 							{% endfor %}
 							<form method="POST" style="display: none;">

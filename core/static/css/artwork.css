@@ -134,7 +134,8 @@ div.search {
 	height: 3rem;
 	width: 20rem;
 }
-div.search>input{
+
+div.search>input {
 	border-radius: 0.3rem;
 	border: none;
 	padding: 0 0.3rem;
@@ -144,7 +145,8 @@ div.search>input{
 	width: 6rem;
 	transition: width 0.6s;
 }
-div.search>input:focus{
+
+div.search>input:focus {
 	width: 100%;
 	color: #555;
 }
@@ -359,44 +361,108 @@ section>div {
 	border-radius: 0.4rem;
 	background-color: #fff;
 	box-shadow: #888 0 0 0.2rem;
+	transition: background-color 0.4s;
 }
-
+#artwork>div>div>span>a:hover{
+	background-color: #f0f0f0;
+}
 #artwork>div>div>span>a.t1 {
 	background-color: #5ad;
+}
+#artwork>div>div>span>a.t1:hover{
+	background-color: #59c;
+	
 }
 #artwork>div>div>span>a.t2 {
 	color: #fff;
 	background-color: #5da;
 }
+#artwork>div>div>span>a.t2:hover{
+	background-color: #5c9;
+	
+}
 #artwork>div>div>span>a.t3 {
 	color: #fff;
 	background-color: #d5a;
 }
-#artwork>div>div>span>a.t1>span{
+#artwork>div>div>span>a.t3:hover{
+	background-color: #c59;
+	
+}
+#artwork>div>div>span>a.t1>span {
 	color: #fff;
 }
-#artwork>div>div>span>a.t2>span{
+
+#artwork>div>div>span>a.t2>span {
 	color: #fff;
 }
-#artwork>div>div>span>a.t3>span{
+
+#artwork>div>div>span>a.t3>span {
 	color: #fff;
 }
+
 #artwork>div>div>span>div>a {
+	display: flex;
 	box-sizing: border-box;
+	align-items: center;
 	max-width: 24rem;
 	min-height: 2rem;
 	margin: 0.25rem;
 	border-radius: 0.4rem;
 	background-color: #fff;
 	box-shadow: #888 0 0 0.2rem;
+	transition: background-color, 0.4s;
 }
-
 #artwork>div>div>span>a>span,
 #artwork>div>div>span>div>a {
+	position: relative;
 	padding: 0 0.5rem;
 	line-height: 2rem;
 	font-size: 1rem;
 	color: #888;
+}
+
+#artwork>div>div>span>div>a.disabled {
+	background-color: #888 !important;
+}
+
+#artwork>div>div>span>div>a.disabled>span {
+	text-decoration-line: line-through;
+	text-decoration-thickness: 0.125rem;
+}
+
+#artwork>div>div>span>div.edit>a:hover>button {
+	width: 100%;
+	right: 0;
+	z-index: 9;
+}
+
+#artwork>div>div>span>div.edit>a {
+	cursor: default;
+}
+#artwork>div>div>span>div>a>button {
+	right: 50%;
+	position: absolute;
+	display: inline-block;
+	overflow: hidden;
+	cursor: pointer;
+	width: 0rem;
+	height: 2rem;
+	line-height: 1.5rem;
+	border-radius: 0.4rem;
+	color: #fff;
+	border: none;
+	background-color: #fff;
+	transition: width 0.4s cubic-bezier(0.5,1.5,0.5,1), background 0.4s, right 0.4s cubic-bezier(0.5,1.5,0.5,1);
+}
+
+#artwork>div>div>span>div>a>button:hover {
+	background-color: #f55;
+}
+
+#artwork>div>div>span>div>a.disabled>button,#artwork>div>div>span>div>a.disabled>button:hover {
+	color: #555;
+	background-color: #fff;
 }
 
 #artwork>div>div>span>div {
@@ -437,7 +503,7 @@ section>div {
 	align-items: center;
 	border-radius: 0.3rem;
 	background-color: #fff;
-	transition: background-color 0.4s;
+	transition: background-color 0.4s, border-color 0.4s;
 	box-sizing: border-box;
 	border: 0.125rem #fff dotted;
 }
@@ -481,6 +547,28 @@ section>div {
 	margin: 0 auto;
 }
 
+#tools_bar>div.Remove {
+	margin-right: 1rem;
+	background-color: #a5f;
+}
+
+#tools_bar>div.Remove>span {
+	color: #fff;
+}
+
+#tools_bar>div.Remove:hover {
+	background-color: #f55;
+	border-color: #f55;
+}
+#tools_bar>div.disabled {
+	background-color: #a5f;
+	border-color: blueviolet;
+	cursor: default;
+}
+
+#tools_bar>div.disabled>span {
+	color: blueviolet;
+}
 
 #head_img {
 	border-radius: 2rem;
